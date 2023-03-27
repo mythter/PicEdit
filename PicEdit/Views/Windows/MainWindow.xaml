@@ -11,13 +11,52 @@
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
-    <Grid>
-        <TextBox HorizontalAlignment="Left"
-                 Margin="192,74,0,0"
-                 TextWrapping="Wrap"
-                 Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Top"
-                 Width="175"
-                 Height="39"/>
-    </Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Exit" Command=""/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Command=""/>
+            </MenuItem>
+        </Menu>
+        
+        <StatusBar DockPanel.Dock="Bottom"
+                   Background="#4B4952">
+            <StatusBarItem>
+                <TextBlock Foreground="LightGray" Text="1234"/>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ProgressBar BorderThickness="0" Foreground="White" Background="Gray" Height="14" Width="120" Value="30"/>
+            </StatusBarItem>
+        </StatusBar>
+        
+        <TabControl  Background="Gray" BorderThickness="0">
+            <TabItem Header="Tab 1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="46*"/>
+                        <RowDefinition Height="343*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60*"/>
+                        <ColumnDefinition Width="337*"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.Column="0" Grid.Row="0"
+                               Fill="Blue" 
+                               Stroke="Red" 
+                               StrokeThickness="3" 
+                               RadiusX="5" 
+                               RadiusY="7"/>
+                    <Ellipse Grid.Column="1" Grid.Row="0"
+                             Fill="Red"
+                             Stroke="Blue"
+                             StrokeThickness="3"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Tab 2">
+                
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>
