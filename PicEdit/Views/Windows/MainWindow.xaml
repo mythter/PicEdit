@@ -12,15 +12,20 @@
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <cmd:CloseApplicationCommand x:Key="CloseApplicationCommand"/>
+    </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <!--<MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>-->
-                <MenuItem Header="Exit">
+                <MenuItem Header="Exit" Command="{StaticResource CloseApplicationCommand}"/>
+                <!--<MenuItem Header="Exit">
                     <MenuItem.Command>
-                        <cmd:CloseApplcationCommand/>
+                        <cmd:CloseAppilcationCommand/>
                     </MenuItem.Command>
-                </MenuItem>
+                </MenuItem>-->
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About"/>
@@ -57,7 +62,12 @@
                     <Ellipse Grid.Column="1" Grid.Row="0"
                              Fill="Red"
                              Stroke="Blue"
-                             StrokeThickness="3"/>
+                             StrokeThickness="3">
+                        <Ellipse.InputBindings>
+                            <MouseBinding Command="{Binding CloseApplicationCommand}"
+                                          MouseAction="LeftClick"/>
+                        </Ellipse.InputBindings>
+                    </Ellipse>
                 </Grid>
             </TabItem>
             <TabItem Header="Tab 2">

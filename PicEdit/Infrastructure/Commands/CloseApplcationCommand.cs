@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace PicEdit.Infrastructure.Commands
 {
-    internal class CloseApplcationCommand : Command
+    internal class CloseApplicationCommand : Command
     {
         public override bool CanExecute(object? parameter) => true;
 
