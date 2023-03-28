@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:vm="clr-namespace:PicEdit.ViewModels"
+        xmlns:cmd="clr-namespace:PicEdit.Infrastructure.Commands"
         xmlns:local="clr-namespace:PicEdit"
         Title="{Binding Title}"
         Height="450" Width="800">
@@ -14,13 +15,18 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>
+                <!--<MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>-->
+                <MenuItem Header="Exit">
+                    <MenuItem.Command>
+                        <cmd:CloseApplcationCommand/>
+                    </MenuItem.Command>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
-        
+
         <StatusBar DockPanel.Dock="Bottom"
                    Background="#4B4952">
             <StatusBarItem>
@@ -30,7 +36,7 @@
                 <ProgressBar BorderThickness="0" Foreground="White" Background="Gray" Height="14" Width="120" Value="30"/>
             </StatusBarItem>
         </StatusBar>
-        
+
         <TabControl  Background="Gray" BorderThickness="0">
             <TabItem Header="Tab 1">
                 <Grid>
@@ -55,7 +61,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Tab 2">
-                
+
             </TabItem>
         </TabControl>
     </DockPanel>
