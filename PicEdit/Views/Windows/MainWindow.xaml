@@ -14,10 +14,10 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Exit" Command=""/>
+                <MenuItem Header="Exit" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="About" Command=""/>
+                <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
         
