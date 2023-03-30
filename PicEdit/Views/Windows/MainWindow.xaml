@@ -4,6 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+        xmlns:phos="clr-namespace:PicEdit.Fonts.RegularPhosphor"
+        xmlns:mat="clr-namespace:PicEdit.Fonts.RegularMaterial"
         xmlns:vm="clr-namespace:PicEdit.ViewModels"
         xmlns:cmd="clr-namespace:PicEdit.Infrastructure.Commands"
         xmlns:local="clr-namespace:PicEdit"
@@ -43,7 +48,18 @@
         </StatusBar>
 
         <TabControl  Background="Gray" BorderThickness="0">
-            <TabItem Header="Tab 1">
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel>
+                        <!--<Image Source=""></Image>-->
+                        <!--<fa5:ImageAwesome Icon="Brands__500Px" Height="35" Margin="10, 0"/>-->
+                        <!--<iconPacks:PackIconBoxIcons Kind="LogosAdobe" />-->
+                        <fa:IconImage Icon="Github" Height="24"/>
+                        <phos:IconImage Icon="Radio" Height="24" />
+                        <mat:IconImage Icon="Crop_Rotate" Height="24" />
+                        <TextBlock Text="Tab 1"/>
+                    </StackPanel>
+                </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="46*"/>

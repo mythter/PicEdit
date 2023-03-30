@@ -8,9 +8,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\BoldPhosphor.ttf" />
+    <None Remove="Fonts\DuotonePhosphor.ttf" />
+    <None Remove="Fonts\FillPhosphor.ttf" />
+    <None Remove="Fonts\LightPhosphor.ttf" />
+    <None Remove="Fonts\RegularMaterial.ttf" />
+    <None Remove="Fonts\RegularMaterialOutlined.otf" />
+    <None Remove="Fonts\RegularMaterialRound.otf" />
+    <None Remove="Fonts\RegularMaterialSharp.otf" />
+    <None Remove="Fonts\RegularMaterialTwoTone.otf" />
+    <None Remove="Fonts\RegularPhosphor.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialOutlined.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialRound.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialSharp.ttf" />
+    <None Remove="Fonts\ThinPhosphor.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Data\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FontAwesome.Sharp" Version="6.3.0" />
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\RegularMaterial.ttf" />
+    <Resource Include="Fonts\RegularPhosphor.ttf" />
   </ItemGroup>
 
 </Project>
