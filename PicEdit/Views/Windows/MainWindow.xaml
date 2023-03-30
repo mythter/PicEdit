@@ -50,13 +50,9 @@
         <TabControl  Background="Gray" BorderThickness="0">
             <TabItem>
                 <TabItem.Header>
-                    <StackPanel>
+                    <StackPanel Orientation="Horizontal">
                         <!--<Image Source=""></Image>-->
-                        <!--<fa5:ImageAwesome Icon="Brands__500Px" Height="35" Margin="10, 0"/>-->
-                        <!--<iconPacks:PackIconBoxIcons Kind="LogosAdobe" />-->
-                        <fa:IconImage Icon="Github" Height="24"/>
-                        <phos:IconImage Icon="Radio" Height="24" />
-                        <mat:IconImage Icon="Crop_Rotate" Height="24" />
+                        <fa5:ImageAwesome Icon="Regular_File" Height="12" Margin="0, 0, 5, 0"/>
                         <TextBlock Text="Tab 1"/>
                     </StackPanel>
                 </TabItem.Header>
