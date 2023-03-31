@@ -6,10 +6,33 @@
         xmlns:local="clr-namespace:PicEditWPFTest"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Button Content="Button" Background="Green" HorizontalAlignment="Left" Margin="79,115,0,0" VerticalAlignment="Top"/>
-        <ScrollBar/>
-        <Slider HorizontalAlignment="Left" Margin="219,204,0,0" VerticalAlignment="Top" Width="120"/>
 
-    </Grid>
+    <DockPanel>
+        <Slider x:Name="Zoom" DockPanel.Dock="Left" Value="1" Minimum="0.1" Maximum="15" Width="25" Orientation="Vertical" />
+        <!--<Viewbox Width="150" Margin="5 5 5 5">
+            <Canvas x:Name="Canv"
+                    Width="{Binding ElementName=Img, Path=ActualWidth}"
+                    Height="{Binding ElementName=Img, Path=ActualHeight}" >
+                <Image Source="{Binding ElementName=Img, Path=Source}"
+
+                       x:Name="MainImage"/>
+                <Rectangle x:Name="HRect"
+                           Fill="#75ffffff"
+                           Stroke="Black"
+                           MaxHeight="{Binding ElementName=Img, Path=ActualHeight}"
+                           MaxWidth="{Binding ElementName=Img, Path=ActualWidth}"/>
+            </Canvas>
+        </Viewbox>-->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      x:Name="SV" 
+                      PreviewMouseWheel="SV_PreviewMouseWheel">
+            <Image Source="D:\\Сова 2.jpg" Stretch="None" x:Name="MainImg">
+                <Image.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding ElementName=Zoom,Path=Value}" 
+                                        ScaleY="{Binding ElementName=Zoom,Path=Value}"/>
+                </Image.LayoutTransform>
+            </Image>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

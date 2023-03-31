@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -24,5 +25,29 @@ namespace PicEdit
         {
             InitializeComponent();
         }
+
+        #region ToolBar color settings
+        private void ToolBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            ToolBar toolBar = sender as ToolBar;
+            var overflowGrid = toolBar.Template.FindName("OverflowGrid", toolBar) as Grid;
+            if (overflowGrid != null)
+            {
+                overflowGrid.Background = new SolidColorBrush(Color.FromArgb(255, (byte)66, (byte)66, (byte)66));
+            }
+
+            var overflowButton = toolBar.Template.FindName("OverflowButton", toolBar) as ToggleButton;
+            if (overflowButton != null)
+            {
+                overflowButton.Background = new SolidColorBrush(Color.FromArgb(255, (byte)66, (byte)66, (byte)66));
+            }
+
+            var overflowPanel = toolBar.Template.FindName("PART_ToolBarOverflowPanel", toolBar) as ToolBarOverflowPanel;
+            if (overflowPanel != null)
+            {
+                overflowPanel.Background = new SolidColorBrush(Color.FromArgb(255, (byte)66, (byte)66, (byte)66));
+            }
+        } 
+        #endregion
     }
 }

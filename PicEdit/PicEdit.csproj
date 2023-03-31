@@ -13,6 +13,7 @@
     <None Remove="Fonts\FillPhosphor.ttf" />
     <None Remove="Fonts\LightPhosphor.ttf" />
     <None Remove="Fonts\RegularMaterial.ttf" />
+    <None Remove="Fonts\RegularMaterialIconsRound.otf" />
     <None Remove="Fonts\RegularMaterialOutlined.otf" />
     <None Remove="Fonts\RegularMaterialRound.otf" />
     <None Remove="Fonts\RegularMaterialSharp.otf" />
@@ -37,7 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\FillPhosphor.ttf" />
     <Resource Include="Fonts\RegularMaterial.ttf" />
+    <Resource Include="Fonts\RegularMaterialIconsRound.otf" />
     <Resource Include="Fonts\RegularPhosphor.ttf" />
   </ItemGroup>
 
