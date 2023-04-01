@@ -60,7 +60,7 @@ namespace PicEdit.ViewModels
         public double ZoomValue
         {
             get => _zoomValue;
-            set { if (_zoomValue <= 15) Set(ref _zoomValue, value); }
+            set { if (_zoomValue >= 0) Set(ref _zoomValue, value); }
         } 
         #endregion
 
@@ -115,6 +115,12 @@ namespace PicEdit.ViewModels
 
         private void OnZoomOutImageCommandExecuted(object p)
         {
+            double temp = ZoomValue * 10;
+            temp = Math.Round(temp);
+            if (temp <= 1)
+            {
+                return;
+            }
             ZoomValue -= 0.1;
         }
         #endregion
