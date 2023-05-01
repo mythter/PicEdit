@@ -1,17 +1,10 @@
-﻿using Microsoft.Win32;
-using PicEdit.Infrastructure.Commands;
+﻿using PicEdit.Infrastructure.Commands;
 using PicEdit.ViewModels.Base;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Forms = System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Markup;
 
 namespace PicEdit.ViewModels
 {
@@ -61,7 +54,7 @@ namespace PicEdit.ViewModels
         {
             get => _zoomValue;
             set { if (_zoomValue >= 0) Set(ref _zoomValue, value); }
-        } 
+        }
         #endregion
 
         #region Commands
@@ -115,8 +108,7 @@ namespace PicEdit.ViewModels
 
         private void OnZoomOutImageCommandExecuted(object p)
         {
-            double temp = ZoomValue * 10;
-            temp = Math.Round(temp);
+            double temp = Math.Round(ZoomValue * 10);
             if (temp <= 1)
             {
                 return;

@@ -23,6 +23,18 @@
     <None Remove="Fonts\RegularVariableMaterialRound.ttf" />
     <None Remove="Fonts\RegularVariableMaterialSharp.ttf" />
     <None Remove="Fonts\ThinPhosphor.ttf" />
+    <None Remove="Images\BMP.png" />
+    <None Remove="Images\BMP.svg" />
+    <None Remove="Images\GIF.png" />
+    <None Remove="Images\GIF.svg" />
+    <None Remove="Images\ICON.png" />
+    <None Remove="Images\ICON.svg" />
+    <None Remove="Images\JPG.png" />
+    <None Remove="Images\JPG.svg" />
+    <None Remove="Images\PNG.png" />
+    <None Remove="Images\PNG.svg" />
+    <None Remove="Images\TIFF.png" />
+    <None Remove="Images\TIFF.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +54,12 @@
     <Resource Include="Fonts\RegularMaterial.ttf" />
     <Resource Include="Fonts\RegularMaterialIconsRound.otf" />
     <Resource Include="Fonts\RegularPhosphor.ttf" />
+    <Resource Include="Images\BMP.png" />
+    <Resource Include="Images\GIF.png" />
+    <Resource Include="Images\ICON.png" />
+    <Resource Include="Images\JPG.png" />
+    <Resource Include="Images\PNG.png" />
+    <Resource Include="Images\TIFF.png" />
   </ItemGroup>
 
 </Project>

@@ -411,8 +411,8 @@
         <!--#endregion-->
 
         <!--#region ScrollViewer template -->
-        
-        <!--Brushes used in Styling of ScrollViewer-->     
+
+        <!--Brushes used in Styling of ScrollViewer-->
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="#FFF" />
         <SolidColorBrush x:Key="HoverBorderBrush" Color="#DDD" />
@@ -681,8 +681,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <Border Grid.ColumnSpan="1" Grid.RowSpan="1"
-                  BorderThickness="0,1,1,1">
+                            <Border BorderThickness="0,1,1,1">
                                 <Border.BorderBrush>
                                     <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                                 </Border.BorderBrush>
@@ -813,8 +812,8 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="20*"/>
-                            <ColumnDefinition  Width="Auto"/>
-                            <ColumnDefinition  Width="5*"
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="5*"
                                                    MinWidth="10"
                                                    MaxWidth="400"/>
                         </Grid.ColumnDefinitions>
@@ -822,13 +821,12 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="22"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="22"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Row="0" Grid.ColumnSpan="4" 
+                        <StackPanel Grid.Row="0" Grid.ColumnSpan="5" 
                                 Background="#FF424242"
-                                Orientation="Horizontal"
-                                DockPanel.Dock="Top">
+                                Orientation="Horizontal">
                             <Button Background="{x:Null}"
                                     BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
@@ -853,52 +851,70 @@
                         </StackPanel>
 
 
-                        <ToolBarTray Grid.Row="1"  Grid.RowSpan="4" Grid.Column="0"
-                     Orientation="Vertical"
-                     Background="{DynamicResource Greyish}"
-                         DockPanel.Dock="Left">
+                        <ToolBarTray Grid.Row="1"  Grid.RowSpan="2" Grid.Column="0"
+                                     Orientation="Vertical"
+                                     Background="{DynamicResource Greyish}"
+                                     ToolBarTray.IsLocked="True">
 
                             <ToolBar VerticalAlignment="Bottom" Width="50" Background="{DynamicResource Grey}" Loaded="ToolBar_Loaded">
 
-                                <Button Margin="0, 2">
+                                <RadioButton x:Name="CursorTool" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 3, 0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             IsChecked="True">
                                     <phosfill:IconImage Icon="Cursor" Width="18" Foreground="DarkGray" />
-                                </Button>
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
+                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 3, 0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
                                     <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
-                                </Button>
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
+                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
                                     <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
-                                </Button>
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
+                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
-                                </Button>
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
+                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
                                     <phosfill:IconImage Icon="CircleHalf" Width="22" Foreground="DarkGray"/>
-                                </Button>
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
+                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
                                     <phos:IconImage Icon="TextT" Width="22" Foreground="DarkGray"/>
-                                </Button>
-                                <Separator Background="#606060"/>
+                                </RadioButton>
                             </ToolBar>
                         </ToolBarTray>
 
-                        <GridSplitter  Grid.Row="1" Grid.Column="2"
-                                          ShowsPreview="False" 
-                                          Width="3"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Stretch"
-                                          Background="{DynamicResource DarkGrey}"/>
-
                         <ScrollViewer Grid.Row="1" Grid.Column="1"
                                       HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
+                                      VerticalScrollBarVisibility="Auto"
+                                      IsHitTestVisible="{Binding ElementName=CursorTool, Path=IsChecked}">
                             <ScrollViewer.InputBindings>
-                                <MouseBinding Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
+                                <MouseBinding  Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
                                 <MouseBinding Gesture="{ext:MouseWheel Direction=Down, Keys=Control}" Command="{Binding ZoomOutImageCommand}"/>
                             </ScrollViewer.InputBindings>
                             <!--<Viewbox>-->
@@ -932,16 +948,29 @@
                             </Canvas>
                             <!--</Viewbox>-->
                         </ScrollViewer>
+                        
+                        <GridSplitter  Grid.Row="1" Grid.Column="2"
+                                          ShowsPreview="False" 
+                                          Width="3"
+                                          HorizontalAlignment="Center"
+                                          Background="{DynamicResource DarkGrey}"/>
 
                         <Grid Grid.Row="1" Grid.Column="3" Background="{DynamicResource Grey}">
-
+                            <Slider Value="0"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    SelectionStart="0"
+                                    Height="20" 
+                                    IsSelectionRangeEnabled="True"
+      
+                                    
+                                    Visibility="Visible"/>
                         </Grid>
 
                         <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
-                               Grid.ColumnSpan="4"
-                               Background="{DynamicResource Grey}"
-                               DockPanel.Dock="Bottom">
+                               Grid.ColumnSpan="5"
+                               Background="{DynamicResource Grey}">
                             <StatusBarItem>
                                 <TextBlock Foreground="LightGray" Text="1234"/>
                             </StatusBarItem>
@@ -985,35 +1014,60 @@
 
 
                         <ToolBarTray Grid.Row="1"  Grid.RowSpan="4" Grid.Column="0"
-                     Orientation="Vertical"
-                     Background="{DynamicResource Greyish}"
-                         DockPanel.Dock="Left">
+                                     Orientation="Vertical"
+                                     Background="{DynamicResource Greyish}"
+                                     DockPanel.Dock="Left"
+                                     ToolBarTray.IsLocked="True">
 
                             <ToolBar VerticalAlignment="Bottom" Width="50" Background="{DynamicResource Grey}" Loaded="ToolBar_Loaded">
 
-                                <Button Margin="0, 2">
-                                    <phosfill:IconImage Icon="Cursor" Width="18" Foreground="DarkGray" />
-                                </Button>
+                                <RadioButton x:Name="PngFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/PNG.png" Height="13" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
-                                    <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
-                                </Button>
+                                <RadioButton x:Name="JpgFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/JPG.png" Height="13" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
-                                    <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
-                                </Button>
+                                <RadioButton x:Name="GifFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/GIF.png" Height="14" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
-                                    <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
-                                </Button>
+                                <RadioButton x:Name="BmpFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/BMP.png" Height="14" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
-                                    <phosfill:IconImage Icon="CircleHalf" Width="22" Foreground="DarkGray"/>
-                                </Button>
+                                <RadioButton x:Name="TiffFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/TIFF.png" Height="14" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
-                                <Button Margin="0, 2">
-                                    <phos:IconImage Icon="TextT" Width="22" Foreground="DarkGray"/>
-                                </Button>
+                                <RadioButton x:Name="IconFormat" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="40" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/ICON.png" Height="14" />
+                                </RadioButton>
                                 <Separator Background="#606060"/>
                             </ToolBar>
                         </ToolBarTray>
