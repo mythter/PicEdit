@@ -68,7 +68,7 @@ namespace PicEdit.ViewModels
         /// <summary>
         /// Format to save a main image.
         /// </summary>
-        private string _saveFormat;
+        private string _saveFormat = "png";
         #endregion
 
         #region MainImagePath
@@ -131,9 +131,8 @@ namespace PicEdit.ViewModels
             if (open.ShowDialog() == Forms.DialogResult.OK)
             {
                 imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
-                //Image = (BitmapImage)(BitmapSource)BitmapDecoder.Create(imageStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad).Frames[0];
-                //Image img = System.Drawing.Image.FromStream(File.Open(open.FileName, FileMode.Open));
-                _saveFormat = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
+                string format = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
+                _format = ToImageFormat(format);
 
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
@@ -143,40 +142,6 @@ namespace PicEdit.ViewModels
                 bitmap.Freeze();
                 Image = bitmap;
 
-                switch (_saveFormat)
-                {
-                    case "png":
-                        _format = ImageFormat.Png;
-                        break;
-                    case "jpeg":
-                    case "jpg":
-                        _format = ImageFormat.Jpeg;
-                        break;
-                    case "gif":
-                        _format = ImageFormat.Gif;
-                        break;
-                    case "bmp":
-                        _format = ImageFormat.Bmp;
-                        break;
-                    case "tiff":
-                        _format = ImageFormat.Tiff;
-                        break;
-                    case "ico":
-                        _format = ImageFormat.Icon;
-                        break;
-                    default:
-                        _format = ImageFormat.Png;
-                        break;
-                }
-
-                //img.Save(imageStream, _format);
-                //imageStream.Position = 0;
-                //Image = new BitmapImage();
-                //Image.BeginInit();
-                //Image.StreamSource = imageStream;
-                //Image.CacheOption = BitmapCacheOption.OnLoad;
-                //Image.EndInit();
-                //Image = new BitmapImage(new Uri(open.FileName));
                 _path = open.FileName;
                 OnPropertyChanged(nameof(Image));
             }
@@ -211,45 +176,39 @@ namespace PicEdit.ViewModels
                 "ICO File(*.ico)|*.ico";
             save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             save.FileName = "Untitled1";
-            ImageFormat saveFormat;
 
             switch (_saveFormat)
             {
                 case "png":
                     save.FilterIndex = 1;
-                    saveFormat = ImageFormat.Png;
                     break;
                 case "jpeg":
                 case "jpg":
                     save.FilterIndex = 2;
-                    saveFormat = ImageFormat.Jpeg;
                     break;
                 case "gif":
                     save.FilterIndex = 3;
-                    saveFormat = ImageFormat.Gif;
                     break;
                 case "bmp":
                     save.FilterIndex = 4;
-                    saveFormat = ImageFormat.Bmp;
                     break;
                 case "tiff":
                     save.FilterIndex = 5;
-                    saveFormat = ImageFormat.Tiff;
                     break;
                 case "ico":
                     save.FilterIndex = 6;
-                    saveFormat = ImageFormat.Icon;
                     break;
                 default:
                     save.FilterIndex = 1;
-                    saveFormat = ImageFormat.Png;
                     break;
             }
 
             if (save.ShowDialog() == Forms.DialogResult.OK)
             {
                 string fileName = save.FileName;
-
+                string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
+                _saveFormat = _saveFormat == chosenFormat ? _saveFormat : chosenFormat;
+                ImageFormat saveFormat = ToImageFormat(_saveFormat);
                 Bitmap bmp;
                 using (MemoryStream outStream = new MemoryStream())
                 {
@@ -286,7 +245,8 @@ namespace PicEdit.ViewModels
             if (save.ShowDialog() == Forms.DialogResult.OK)
             {
                 string fileName = save.FileName;
-
+                string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
+                ImageFormat saveFormat = ToImageFormat(chosenFormat);
                 Bitmap bmp;
                 using (MemoryStream outStream = new MemoryStream())
                 {
@@ -297,7 +257,7 @@ namespace PicEdit.ViewModels
                     bmp = new Bitmap(bitmap);
                 }
 
-                bmp.Save(fileName);
+                bmp.Save(fileName, saveFormat);
             }
         }
         #endregion
@@ -309,57 +269,8 @@ namespace PicEdit.ViewModels
 
         private void OnSaveCommandExecuted(object p)
         {
-            ImageFormat saveFormat = null;
-            switch (_saveFormat)
-            {
-                case "png":
-                    saveFormat = ImageFormat.Png;
-                    break;
-                case "jpeg":
-                case "jpg":
-                    saveFormat = ImageFormat.Jpeg;
-                    break;
-                case "gif":
-                    saveFormat = ImageFormat.Gif;
-                    break;
-                case "bmp":
-                    saveFormat = ImageFormat.Bmp;
-                    break;
-                case "tiff":
-                    saveFormat = ImageFormat.Tiff;
-                    break;
-                case "ico":
-                    saveFormat = ImageFormat.Icon;
-                    break;
-                default:
-                    saveFormat = ImageFormat.Png;
-                    break;
-            }
-
             var img = System.Drawing.Image.FromStream(imageStream);
-            img.Save(_path);
-
-            //Bitmap bmp;
-            //using (MemoryStream outStream = new MemoryStream())
-            //{
-            //    BitmapEncoder enc = new BmpBitmapEncoder();
-            //    enc.Frames.Add(BitmapFrame.Create(Image));
-            //    enc.Save(outStream);
-            //    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-            //    bmp = new Bitmap(bitmap);
-            //}
-
-            //using (MemoryStream memory = new MemoryStream())
-            //{
-            //    using (FileStream fs = new FileStream(_path, FileMode.Create, FileAccess.ReadWrite))
-            //    {
-            //        bmp.Save(memory, ImageFormat.Jpeg);
-            //        byte[] bytes = memory.ToArray();
-            //        fs.Write(bytes, 0, bytes.Length);
-            //    }
-            //}
-
-            //bmp.Save(_path);
+            img.Save(_path, _format);
         }
         #endregion
 
@@ -390,6 +301,30 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
+        #endregion
+
+        #region Functions
+        private ImageFormat ToImageFormat(string strFormat)
+        {
+            switch (strFormat)
+            {
+                case "png":
+                    return ImageFormat.Png;
+                case "jpeg":
+                case "jpg":
+                    return ImageFormat.Jpeg;
+                case "gif":
+                    return ImageFormat.Gif;
+                case "bmp":
+                    return ImageFormat.Bmp;
+                case "tiff":
+                    return ImageFormat.Tiff;
+                case "ico":
+                    return ImageFormat.Icon;
+                default:
+                    return ImageFormat.Png;
+            }
+        }
         #endregion
 
         public MainWindowViewModel()
