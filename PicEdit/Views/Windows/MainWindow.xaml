@@ -785,8 +785,14 @@
                 <MenuItem Header="Open"
                           Style="{DynamicResource MenuItemStyle1}"
                           Command="{Binding OpenImageCommand}"/>
-                <MenuItem Header="Save" Style="{DynamicResource MenuItemStyle1}"/>
-                <MenuItem Header="Save as" Style="{DynamicResource MenuItemStyle1}"/>
+                <MenuItem Header="Save"
+                          Style="{DynamicResource MenuItemStyle1}"
+                          IsEnabled="{Binding IsSaveEnabled}"
+                          Command="{Binding SaveCommand}"/>
+                <MenuItem Header="Save as"
+                          Style="{DynamicResource MenuItemStyle1}"
+                          IsEnabled="{Binding IsSaveEnabled}"
+                          Command="{Binding SaveAsCommand}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Style="{DynamicResource MenuItemStyle1}" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
@@ -831,7 +837,8 @@
                                     BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
                                     Height="20" 
-                                    Margin="3, 0">
+                                    Margin="14, 0, 4, 0"
+                                    Command="{Binding SaveCommand}">
                                 <phosfill:IconImage Icon="FloppyDisk" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
                             <Button Background="{x:Null}"
@@ -844,8 +851,7 @@
                             <Button Background="{x:Null}"
                                     BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
-                                    Height="20" 
-                                    Margin="0, 0, 0, 0">
+                                    Height="20">
                                 <matround:IconImage Icon="Redo" Height="8" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
                         </StackPanel>
@@ -948,7 +954,7 @@
                             </Canvas>
                             <!--</Viewbox>-->
                         </ScrollViewer>
-                        
+
                         <GridSplitter  Grid.Row="1" Grid.Column="2"
                                           ShowsPreview="False" 
                                           Width="3"
@@ -972,10 +978,14 @@
                                Grid.ColumnSpan="5"
                                Background="{DynamicResource Grey}">
                             <StatusBarItem>
-                                <TextBlock Foreground="LightGray" Text="1234"/>
-                            </StatusBarItem>
-                            <StatusBarItem>
-                                <ProgressBar BorderThickness="0" Foreground="White" Background="Gray" Height="14" Width="120" Value="30"/>
+                                <TextBlock Foreground="LightGray" >
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Width: {0} Height: {1}">
+                                            <Binding Path="Image.PixelWidth" />
+                                            <Binding Path="Image.PixelHeight" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </StatusBarItem>
                         </StatusBar>
 
@@ -1006,11 +1016,20 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" 
-                                Background="#FF424242"
-                                Orientation="Horizontal"
-                                DockPanel.Dock="Top">
-                        </StackPanel>
+                        <Grid Grid.Row="0" Grid.ColumnSpan="3" 
+                                    Background="#FF424242">
+
+                            <Button Background="{DynamicResource Gray}"
+                                    Foreground="{DynamicResource DarkGrey}"
+                                    BorderBrush="{x:Null}" 
+                                    Height="20" 
+                                    Width="70"
+                                    
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                    Content="Save"
+                                Command="{Binding ConvertImageCommand}"/>
+                        </Grid>
 
 
                         <ToolBarTray Grid.Row="1"  Grid.RowSpan="4" Grid.Column="0"
@@ -1025,7 +1044,10 @@
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
+                                             BorderThickness="0"
+                                             IsChecked="True"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="png">
                                     <Image Source="/Images/PNG.png" Height="13" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
@@ -1033,23 +1055,29 @@
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
-                                    <Image Source="/Images/JPG.png" Height="13" />
+                                             BorderThickness="0"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="jpg">
+                                    <Image Source="/Images/JPG.png" Height="13"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="GifFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
-                                    <Image Source="/Images/GIF.png" Height="14" />
+                                             BorderThickness="0"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="gif">
+                                    <Image Source="/Images/GIF.png" Height="14"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="BmpFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
+                                             BorderThickness="0"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="bmp">
                                     <Image Source="/Images/BMP.png" Height="14" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
@@ -1057,7 +1085,9 @@
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
+                                             BorderThickness="0"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="tiff">
                                     <Image Source="/Images/TIFF.png" Height="14" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
@@ -1065,31 +1095,37 @@
                                              Margin="0, 5"
                                              Width="40" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
+                                             BorderThickness="0"
+                                             Command="{Binding ChangeSaveImageFormatCommand}"
+                                             CommandParameter="ico">
                                     <Image Source="/Images/ICON.png" Height="14" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                             </ToolBar>
                         </ToolBarTray>
 
-                        <Grid Grid.Row="1" Grid.ColumnSpan="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20*"/>
-                                <ColumnDefinition  Width="Auto"/>
-                                <ColumnDefinition  Width="5*"/>
-                            </Grid.ColumnDefinitions>
+                        <ScrollViewer Grid.Row="1" Grid.Column="1"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+                            <Canvas
+                                        Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                                        Height="{Binding ElementName=MainImg, Path=ActualHeight}"
+                                        Background="White">
+                                <Canvas.LayoutTransform>
+                                    <ScaleTransform 
+                                                ScaleX="{Binding ZoomValue}" 
+                                                ScaleY="{Binding ZoomValue}"/>
+                                </Canvas.LayoutTransform>
 
-                            <GridSplitter Grid.Column="1" 
-                                          ShowsPreview="False" 
-                                          Width="3"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Stretch"
-                                          Background="{DynamicResource DarkGrey}"/>
-
-                            <Grid Grid.Column="2" Background="{DynamicResource Grey}">
-
-                            </Grid>
-                        </Grid>
+                                <Image Source="{Binding Image}">
+                                    <!--<Image.LayoutTransform>
+                                            <ScaleTransform
+                                                ScaleX="{Binding ZoomValue}" 
+                                                ScaleY="{Binding ZoomValue}"/>
+                                        </Image.LayoutTransform>-->
+                                </Image>
+                            </Canvas>
+                        </ScrollViewer>
 
                         <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
@@ -1097,10 +1133,14 @@
                                Background="{DynamicResource Grey}"
                                DockPanel.Dock="Bottom">
                             <StatusBarItem>
-                                <TextBlock Foreground="LightGray" Text="1234"/>
-                            </StatusBarItem>
-                            <StatusBarItem>
-                                <ProgressBar BorderThickness="0" Foreground="White" Background="Gray" Height="14" Width="120" Value="30"/>
+                                <TextBlock Foreground="LightGray" >
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="Width: {0} Height: {1}">
+                                            <Binding Path="Image.PixelWidth" />
+                                            <Binding Path="Image.PixelHeight" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </StatusBarItem>
                         </StatusBar>
 
