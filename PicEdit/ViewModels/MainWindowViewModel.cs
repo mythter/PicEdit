@@ -145,6 +145,7 @@ namespace PicEdit.ViewModels
                 _path = open.FileName;
                 OnPropertyChanged(nameof(Image));
             }
+            ZoomValue = 0.7;
         }
         #endregion
 
@@ -269,8 +270,11 @@ namespace PicEdit.ViewModels
 
         private void OnSaveCommandExecuted(object p)
         {
-            var img = System.Drawing.Image.FromStream(imageStream);
-            img.Save(_path, _format);
+            if(imageStream != null)
+            {
+                var img = System.Drawing.Image.FromStream(imageStream);
+                img.Save(_path, _format);
+            }
         }
         #endregion
 

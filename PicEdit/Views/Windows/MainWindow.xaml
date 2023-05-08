@@ -923,8 +923,8 @@
                                 <MouseBinding  Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
                                 <MouseBinding Gesture="{ext:MouseWheel Direction=Down, Keys=Control}" Command="{Binding ZoomOutImageCommand}"/>
                             </ScrollViewer.InputBindings>
-                            <!--<Viewbox>-->
-                            <!--<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Viewbox>
+                                <!--<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Image  x:Name="MainImg" Source="{Binding Image}">
                                         <Image.LayoutTransform>
                                             <ScaleTransform
@@ -934,25 +934,25 @@
                                     </Image>
                                 </Grid>-->
 
-                            <Canvas x:Name="Canv"
-                                        Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                                <Canvas x:Name="Canv"
+                                         Width="{Binding ElementName=MainImg, Path=ActualWidth}"
                                         Height="{Binding ElementName=MainImg, Path=ActualHeight}"
                                         Background="White">
-                                <Canvas.LayoutTransform>
-                                    <ScaleTransform 
+                                    <Canvas.LayoutTransform>
+                                        <ScaleTransform 
                                                 ScaleX="{Binding ZoomValue}" 
                                                 ScaleY="{Binding ZoomValue}"/>
-                                </Canvas.LayoutTransform>
+                                    </Canvas.LayoutTransform>
 
-                                <Image  x:Name="MainImg" Source="{Binding Image}">
-                                    <!--<Image.LayoutTransform>
+                                    <Image  x:Name="MainImg" Source="{Binding Image}">
+                                        <!--<Image.LayoutTransform>
                                             <ScaleTransform
                                                 ScaleX="{Binding ZoomValue}" 
                                                 ScaleY="{Binding ZoomValue}"/>
                                         </Image.LayoutTransform>-->
-                                </Image>
-                            </Canvas>
-                            <!--</Viewbox>-->
+                                    </Image>
+                                </Canvas>
+                            </Viewbox>
                         </ScrollViewer>
 
                         <GridSplitter  Grid.Row="1" Grid.Column="2"
@@ -1104,11 +1104,8 @@
                             </ToolBar>
                         </ToolBarTray>
 
-                        <ScrollViewer Grid.Row="1" Grid.Column="1"
-                                      HorizontalScrollBarVisibility="Auto"
-                                      VerticalScrollBarVisibility="Auto">
-                            <Canvas
-                                        Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                        <Viewbox Grid.Row="1" Grid.Column="1">
+                            <Canvas     Width="{Binding ElementName=MainImg, Path=ActualWidth}"
                                         Height="{Binding ElementName=MainImg, Path=ActualHeight}"
                                         Background="White">
                                 <Canvas.LayoutTransform>
@@ -1118,14 +1115,9 @@
                                 </Canvas.LayoutTransform>
 
                                 <Image Source="{Binding Image}">
-                                    <!--<Image.LayoutTransform>
-                                            <ScaleTransform
-                                                ScaleX="{Binding ZoomValue}" 
-                                                ScaleY="{Binding ZoomValue}"/>
-                                        </Image.LayoutTransform>-->
                                 </Image>
                             </Canvas>
-                        </ScrollViewer>
+                        </Viewbox>
 
                         <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
