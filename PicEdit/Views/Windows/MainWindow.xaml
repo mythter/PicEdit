@@ -1019,16 +1019,16 @@
                         <Grid Grid.Row="0" Grid.ColumnSpan="3" 
                                     Background="#FF424242">
 
-                            <Button Background="{DynamicResource Gray}"
+                            <!--<Button Background="{DynamicResource Gray}"
                                     Foreground="{DynamicResource DarkGrey}"
                                     BorderBrush="{x:Null}" 
                                     Height="20" 
                                     Width="70"
-                                    
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
+                                    IsEnabled="{Binding IsSaveEnabled}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
                                     Content="Save"
-                                Command="{Binding ConvertImageCommand}"/>
+                                Command="{Binding ConvertImageCommand}"/>-->
                         </Grid>
 
 
@@ -1129,9 +1129,10 @@
 
                         <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
-                               Grid.ColumnSpan="3"
-                               Background="{DynamicResource Grey}"
-                               DockPanel.Dock="Bottom">
+                                   Grid.Column ="0"
+                                   Grid.ColumnSpan="3"
+                                   Background="{DynamicResource Grey}"
+                                   DockPanel.Dock="Bottom">
                             <StatusBarItem>
                                 <TextBlock Foreground="LightGray" >
                                     <TextBlock.Text>
@@ -1141,6 +1142,17 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
+                            </StatusBarItem>
+                            <StatusBarItem>
+                                <Button Background="{DynamicResource DarkGray}"
+                                    Foreground="{DynamicResource DarkGrey}"
+                                    BorderBrush="{x:Null}" 
+                                    Height="20" 
+                                    Width="70"
+                                    IsEnabled="{Binding IsSaveEnabled}"
+                                    Margin="20, 0, 0, 0"
+                                    Content="Save"
+                                Command="{Binding ConvertImageCommand}"/>
                             </StatusBarItem>
                         </StatusBar>
 
