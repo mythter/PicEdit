@@ -12,6 +12,7 @@ using Microsoft.VisualBasic;
 using System.Windows.Shapes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static System.Windows.Forms.DataFormats;
+using System.Windows.Media;
 
 namespace PicEdit.ViewModels
 {
@@ -41,12 +42,12 @@ namespace PicEdit.ViewModels
         Stream imageStream;
 
         #region MainImage
-        private BitmapImage _image;
+        private BitmapSource _image;
 
         /// <summary>
         /// Main image.
         /// </summary>
-        public BitmapImage Image
+        public BitmapSource Image
         {
             get => _image;
             set
@@ -57,28 +58,92 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
-        #region MainImageFormat
+        #region MainImage Format
         /// <summary>
         /// Format of a main image.
         /// </summary>
         private ImageFormat _format;
         #endregion
 
-        #region MainImageSaveFormat
+        #region MainImage Save Format
         /// <summary>
         /// Format to save a main image.
         /// </summary>
         private string _saveFormat = "png";
         #endregion
 
-        #region MainImagePath
+        #region MainImage Path
         /// <summary>
         /// Path of a main image.
         /// </summary>
         private string _path = "";
         #endregion
 
-        #region ZoomValue
+        #region MainImage Scale Value
+        private double _scaleValue = 1;
+
+        /// <summary>
+        /// Scale value for main image
+        /// </summary>
+        public double ScaleValue
+        {
+            get => _scaleValue;
+            set
+            {
+                Set(ref _scaleValue, value);
+                ScaleXValue = ScaleValue;
+                ScaleYValue = ScaleValue;
+
+            }
+        }
+        #endregion
+
+        static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
+        {
+            int width = bmp.PixelWidth;
+            int height = bmp.PixelHeight;
+            int stride = width * ((bmp.Format.BitsPerPixel + 7) / 8);
+
+            byte[] pixels = new byte[height * stride];
+
+            bmp.CopyPixels(pixels, stride, 0);
+
+            return pixels;
+        }
+
+        #region MainImage Scale X Value
+        private double _scaleXValue = 1;
+
+        /// <summary>
+        /// Scale value for main image
+        /// </summary>
+        public double ScaleXValue
+        {
+            get => _scaleXValue;
+            set
+            {
+                Set(ref _scaleXValue, value);
+            }
+        }
+        #endregion
+
+        #region MainImage Scale Y Value
+        private double _scaleYValue = 1;
+
+        /// <summary>
+        /// Scale value for main image
+        /// </summary>
+        public double ScaleYValue
+        {
+            get => _scaleYValue;
+            set
+            {
+                Set(ref _scaleYValue, value);
+            }
+        }
+        #endregion
+
+        #region Zoom Value
         private double _zoomValue = 1;
 
         /// <summary>
@@ -91,7 +156,7 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
-        #region IsSaveEnabled
+        #region Is Save Enabled
         private bool _isSaveEnabled = false;
 
         /// <summary>
@@ -101,6 +166,23 @@ namespace PicEdit.ViewModels
         {
             get => _isSaveEnabled;
             set => Set(ref _isSaveEnabled, value);
+        }
+        #endregion
+
+        #region Slider Value
+        private int _sliderValue = 100;
+
+        /// <summary>
+        /// Slider value
+        /// </summary>
+        public int SliderValue
+        {
+            get => _sliderValue;
+            set
+            {
+                Set(ref _sliderValue, value);
+                ScaleValue = SliderValue / 100f;
+            }
         }
         #endregion
 
@@ -133,7 +215,7 @@ namespace PicEdit.ViewModels
                 imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
                 string format = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
                 _format = ToImageFormat(format);
-
+ 
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.StreamSource = imageStream;
@@ -246,19 +328,25 @@ namespace PicEdit.ViewModels
             if (save.ShowDialog() == Forms.DialogResult.OK)
             {
                 string fileName = save.FileName;
-                string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
-                ImageFormat saveFormat = ToImageFormat(chosenFormat);
-                Bitmap bmp;
-                using (MemoryStream outStream = new MemoryStream())
-                {
-                    BitmapEncoder enc = new BmpBitmapEncoder();
-                    enc.Frames.Add(BitmapFrame.Create(Image));
-                    enc.Save(outStream);
-                    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                    bmp = new Bitmap(bitmap);
-                }
+                //string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
+                //ImageFormat saveFormat = ToImageFormat(chosenFormat);
+                //Bitmap bmp;
+                //using (MemoryStream outStream = new MemoryStream())
+                //{
+                //    BitmapEncoder enc = new BmpBitmapEncoder();
+                //    enc.Frames.Add(BitmapFrame.Create(Image));
+                //    enc.Save(outStream);
+                //    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                //    bmp = new Bitmap(bitmap);
+                //}
 
-                bmp.Save(fileName, saveFormat);
+                //bmp.Save(fileName, saveFormat);
+
+                if (imageStream != null)
+                {
+                    var img = System.Drawing.Image.FromStream(imageStream);
+                    img.Save(fileName, _format);
+                }
             }
         }
         #endregion
@@ -270,10 +358,13 @@ namespace PicEdit.ViewModels
 
         private void OnSaveCommandExecuted(object p)
         {
-            if(imageStream != null)
+            if (imageStream != null)
             {
+                Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
+                imageStream = StreamFromBitmapSource(Image);
                 var img = System.Drawing.Image.FromStream(imageStream);
                 img.Save(_path, _format);
+                SliderValue = 100;
             }
         }
         #endregion
@@ -328,6 +419,17 @@ namespace PicEdit.ViewModels
                 default:
                     return ImageFormat.Png;
             }
+        }
+
+        private Stream StreamFromBitmapSource(BitmapSource writeBmp)
+        {
+            Stream bmp = new MemoryStream();
+
+            BitmapEncoder enc = new BmpBitmapEncoder();
+            enc.Frames.Add(BitmapFrame.Create(writeBmp));
+            enc.Save(bmp);
+
+            return bmp;
         }
         #endregion
 
