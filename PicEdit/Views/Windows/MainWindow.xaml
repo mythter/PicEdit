@@ -34,6 +34,10 @@
         <SolidColorBrush x:Key="Gray" Color="Gray"/>
         <SolidColorBrush x:Key="DarkGray" Color="DarkGray"/>
 
+        <mat:IconImage x:Key="ChainOnIcon" Icon="Link_Off" Width="20" Foreground="DarkGray"/>
+        <mat:IconImage x:Key="ChainOffIcon" Icon="Link" Width="20" Foreground="DarkGray"/>
+
+
         <!--#region MenuItem template -->
         <LinearGradientBrush x:Key="MenuItemSelectionFill" EndPoint="0,1" StartPoint="0,0">
             <GradientStop Color="#34C5EBFF" Offset="0"/>
@@ -819,7 +823,7 @@
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="20*"/>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="5*"
+                            <ColumnDefinition Width="6*"
                                                    MinWidth="10"
                                                    MaxWidth="400"/>
                         </Grid.ColumnDefinitions>
@@ -873,15 +877,16 @@
                                     <phosfill:IconImage Icon="Cursor" Width="18" Foreground="DarkGray" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                <RadioButton x:Name="ScaleTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 3, 0, 1"
                                              Width="30" Height="30"
                                              Background="Transparent"
-                                             BorderThickness="0">
+                                             BorderThickness="0"
+                                              IsChecked="{Binding IsScaleToolChecked, Mode=OneWayToSource}">
                                     <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                <RadioButton x:Name="CropTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
                                              Background="Transparent"
@@ -889,7 +894,16 @@
                                     <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                <RadioButton x:Name="RotationTool" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             IsChecked="{Binding IsRotationToolChecked, Mode=OneWayToSource}">
+                                    <mat:IconImage Icon="Rotate_Right" Width="22" Foreground="DarkGray"/>
+                                </RadioButton>
+                                <Separator Background="#606060"/>
+                                <RadioButton x:Name="brushTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
                                              Background="Transparent"
@@ -897,20 +911,12 @@
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
+                                <RadioButton x:Name="ColorTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
                                              Background="Transparent"
                                              BorderThickness="0">
                                     <phosfill:IconImage Icon="CircleHalf" Width="22" Foreground="DarkGray"/>
-                                </RadioButton>
-                                <Separator Background="#606060"/>
-                                <RadioButton Style="{StaticResource {x:Type ToggleButton}}"
-                                             Margin="0, 1"
-                                             Width="30" Height="30"
-                                             Background="Transparent"
-                                             BorderThickness="0">
-                                    <phos:IconImage Icon="TextT" Width="22" Foreground="DarkGray"/>
                                 </RadioButton>
                             </ToolBar>
                         </ToolBarTray>
@@ -944,12 +950,17 @@
                                                 ScaleY="{Binding ZoomValue}"/>
                                 </Canvas.LayoutTransform>
 
-                                <Image  x:Name="MainImg" Source="{Binding Image}">
+                                <Image  x:Name="MainImg" Source="{Binding Image}"
+                                        RenderTransformOrigin="0.5, 0.5">
                                     <Image.LayoutTransform>
                                         <ScaleTransform
                                                 ScaleX="{Binding ScaleXValue}" 
                                                 ScaleY="{Binding ScaleYValue}"/>
                                     </Image.LayoutTransform>
+
+                                    <Image.RenderTransform>
+                                        <RotateTransform Angle="{Binding AngleValue}"/>
+                                    </Image.RenderTransform>
                                 </Image>
                             </Canvas>
                             <!--</Viewbox>-->
@@ -962,13 +973,131 @@
                                           Background="{DynamicResource DarkGrey}"/>
 
                         <Grid Grid.Row="1" Grid.Column="3" Background="{DynamicResource Grey}">
-                            <Slider x:Name="Slider" 
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="0.5*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Scaling"
+                                           Grid.Row="0" Grid.Column="1"                                        
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="1" Grid.Column="1"
                                     Minimum="1"
                                     Maximum="100"
-                                    Height="20" 
+                                    Height="20"
+                                    MaxWidth="350"
+                                    Margin="8, 0, 8, 4"
                                     IsSelectionRangeEnabled="True"
-                                    Value="{Binding SliderValue}"
+                                    Value="{Binding SliderXValue}"
+                                    IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
                                     Visibility="Visible"/>
+
+                                <Slider Grid.Row="3" Grid.Column="1"
+                                    Minimum="1"
+                                    Maximum="100"
+                                    Height="20"
+                                    MaxWidth="350"
+                                    Margin="8, 4, 8, 0"
+                                    IsSelectionRangeEnabled="True"
+                                    Value="{Binding SliderYValue}"
+                                    IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
+                                    Visibility="Visible"/>
+
+                                <ToggleButton IsChecked="{Binding IsScaleChecked}"
+                                          Grid.Row="2" Grid.Column="1"
+                                          IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
+                                          Width="25"
+                                          Height="20"
+                                          Background="Transparent"
+                                          BorderThickness="0">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="true">
+                                                    <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+
+                                <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                           Text="W:"
+                                           HorizontalAlignment="Center"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource DarkGray}"/>
+
+                                <TextBlock Grid.Row="3"
+                                       Grid.Column="0"
+                                           Text="H:"
+                                           HorizontalAlignment="Center"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource DarkGray}"/>
+                            </Grid>
+
+                            <Grid Grid.Row="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
+
+
+                                <TextBlock Text="Rotation"
+                                           Grid.Row="0" Grid.Column="1"                                        
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="1" Grid.Column="1"
+                                        x:Name="RotationSlider"
+                                    Minimum="0"
+                                    Maximum="360"
+                                    IsSnapToTickEnabled="True"
+                                    Ticks="0, 90, 180, 270, 360"
+                                    Height="20"
+                                    MaxWidth="350"
+                                    Margin="8, 0, 8, 4"
+                                    IsSelectionRangeEnabled="True"
+                                    Value="{Binding AngleValue}"
+                                    IsEnabled="{Binding ElementName=RotationTool, Path=IsChecked}"
+                                    Visibility="Visible"/>
+
+                                <TextBlock Grid.Row="1"
+                                       Grid.Column="0"
+                                           Text="{Binding ElementName=RotationSlider, Path=Value}"
+                                           HorizontalAlignment="Center"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource DarkGray}"/>
+                            </Grid>
+
+
                         </Grid>
 
                         <!--#4B4952-->
@@ -1102,7 +1231,15 @@
                             </ToolBar>
                         </ToolBarTray>
 
-                        <Viewbox Grid.Row="1" Grid.Column="1">
+                        <ScrollViewer Grid.Row="1" Grid.Column="1"
+                                      HorizontalScrollBarVisibility="Auto"
+                                      VerticalScrollBarVisibility="Auto">
+
+                            <ScrollViewer.InputBindings>
+                                <MouseBinding  Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
+                                <MouseBinding Gesture="{ext:MouseWheel Direction=Down, Keys=Control}" Command="{Binding ZoomOutImageCommand}"/>
+                            </ScrollViewer.InputBindings>
+
                             <Canvas     Width="{Binding ElementName=MainImg, Path=ActualWidth}"
                                         Height="{Binding ElementName=MainImg, Path=ActualHeight}"
                                         Background="White">
@@ -1115,7 +1252,7 @@
                                 <Image Source="{Binding Image}">
                                 </Image>
                             </Canvas>
-                        </Viewbox>
+                        </ScrollViewer>
 
                         <!--#4B4952-->
                         <StatusBar Grid.Row="2" 

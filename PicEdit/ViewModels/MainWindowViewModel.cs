@@ -79,43 +79,71 @@ namespace PicEdit.ViewModels
         private string _path = "";
         #endregion
 
-        #region MainImage Scale Value
-        private double _scaleValue = 1;
+        #region Is Scale Relation Checked
+        private bool _isScaleChecked = false;
 
         /// <summary>
-        /// Scale value for main image
+        /// Is scaleX and scaleY do synchronously
         /// </summary>
-        public double ScaleValue
+        public bool IsScaleChecked
         {
-            get => _scaleValue;
+            get => _isScaleChecked;
             set
             {
-                Set(ref _scaleValue, value);
-                ScaleXValue = ScaleValue;
-                ScaleYValue = ScaleValue;
+                Set(ref _isScaleChecked, value);
+            }
+        }
+        #endregion
+
+        #region Is Rotation Tool Checked
+        private bool _isRotationToolChecked;
+
+        /// <summary>
+        /// Is rotation tool checked
+        /// </summary>
+        public bool IsRotationToolChecked
+        {
+            get => _isRotationToolChecked;
+            set
+            {
+                Set(ref _isRotationToolChecked, value);
+                if (!IsRotationToolChecked)
+                {
+                    Image = new TransformedBitmap(Image, new RotateTransform(AngleValue));
+                    AngleValue = 0;
+                }
 
             }
         }
         #endregion
 
-        static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
+        #region Is Scale Tool Checked
+        private bool _isScaleToolChecked;
+
+        /// <summary>
+        /// Is scale tool checked
+        /// </summary>
+        public bool IsScaleToolChecked
         {
-            int width = bmp.PixelWidth;
-            int height = bmp.PixelHeight;
-            int stride = width * ((bmp.Format.BitsPerPixel + 7) / 8);
+            get => _isScaleToolChecked;
+            set
+            {
+                if (SliderXValue != 100 || SliderYValue != 100)
+                {
+                    Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
+                    SliderXValue = 100;
+                    SliderYValue = 100;
+                }
 
-            byte[] pixels = new byte[height * stride];
-
-            bmp.CopyPixels(pixels, stride, 0);
-
-            return pixels;
+            }
         }
+        #endregion
 
         #region MainImage Scale X Value
         private double _scaleXValue = 1;
 
         /// <summary>
-        /// Scale value for main image
+        /// ScaleX value of main image
         /// </summary>
         public double ScaleXValue
         {
@@ -131,7 +159,7 @@ namespace PicEdit.ViewModels
         private double _scaleYValue = 1;
 
         /// <summary>
-        /// Scale value for main image
+        /// ScaleY value of main image
         /// </summary>
         public double ScaleYValue
         {
@@ -139,6 +167,22 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _scaleYValue, value);
+            }
+        }
+        #endregion
+
+        #region MainImage Angle Value
+        private int _angleValue = 0;
+
+        /// <summary>
+        /// Angle value of main image
+        /// </summary>
+        public int AngleValue
+        {
+            get => _angleValue;
+            set
+            {
+                Set(ref _angleValue, value);
             }
         }
         #endregion
@@ -169,19 +213,40 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
-        #region Slider Value
-        private int _sliderValue = 100;
+        #region Slider X Value
+        private int _sliderXValue = 100;
 
         /// <summary>
-        /// Slider value
+        /// Slider X value
         /// </summary>
-        public int SliderValue
+        public int SliderXValue
         {
-            get => _sliderValue;
+            get => _sliderXValue;
             set
             {
-                Set(ref _sliderValue, value);
-                ScaleValue = SliderValue / 100f;
+                Set(ref _sliderXValue, value);
+                ScaleXValue = SliderXValue / 100f;
+                if (IsScaleChecked && SliderYValue != SliderXValue)
+                    SliderYValue = SliderXValue;
+            }
+        }
+        #endregion
+
+        #region Slider Y Value
+        private int _sliderYValue = 100;
+
+        /// <summary>
+        /// Slider Y value
+        /// </summary>
+        public int SliderYValue
+        {
+            get => _sliderYValue;
+            set
+            {
+                Set(ref _sliderYValue, value);
+                ScaleYValue = SliderYValue / 100f;
+                if (IsScaleChecked && SliderXValue != SliderYValue)
+                    SliderXValue = SliderYValue;
             }
         }
         #endregion
@@ -328,8 +393,8 @@ namespace PicEdit.ViewModels
             if (save.ShowDialog() == Forms.DialogResult.OK)
             {
                 string fileName = save.FileName;
-                //string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
-                //ImageFormat saveFormat = ToImageFormat(chosenFormat);
+                string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
+                ImageFormat saveFormat = ToImageFormat(chosenFormat);
                 //Bitmap bmp;
                 //using (MemoryStream outStream = new MemoryStream())
                 //{
@@ -342,11 +407,7 @@ namespace PicEdit.ViewModels
 
                 //bmp.Save(fileName, saveFormat);
 
-                if (imageStream != null)
-                {
-                    var img = System.Drawing.Image.FromStream(imageStream);
-                    img.Save(fileName, _format);
-                }
+                SaveImage(fileName, saveFormat);
             }
         }
         #endregion
@@ -358,14 +419,7 @@ namespace PicEdit.ViewModels
 
         private void OnSaveCommandExecuted(object p)
         {
-            if (imageStream != null)
-            {
-                Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
-                imageStream = StreamFromBitmapSource(Image);
-                var img = System.Drawing.Image.FromStream(imageStream);
-                img.Save(_path, _format);
-                SliderValue = 100;
-            }
+            SaveImage(_path, _format);
         }
         #endregion
 
@@ -431,6 +485,41 @@ namespace PicEdit.ViewModels
 
             return bmp;
         }
+
+        private void SaveImage(string path,  ImageFormat format)
+        {
+            if (imageStream != null)
+            {
+                if(SliderXValue != 100 || SliderYValue != 100)
+                {
+                    Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
+                    SliderXValue = 100;
+                    SliderYValue = 100;
+                }                  
+                if(AngleValue != 0)
+                {
+                    Image = new TransformedBitmap(Image, new RotateTransform(AngleValue));
+                    AngleValue = 0;
+                }
+                imageStream = StreamFromBitmapSource(Image);
+                var img = System.Drawing.Image.FromStream(imageStream);
+                img.Save(path, format);
+            }
+        }
+
+        //static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
+        //{
+        //    int width = bmp.PixelWidth;
+        //    int height = bmp.PixelHeight;
+        //    int stride = width * ((bmp.Format.BitsPerPixel + 7) / 8);
+
+        //    byte[] pixels = new byte[height * stride];
+
+        //    bmp.CopyPixels(pixels, stride, 0);
+
+        //    return pixels;
+        //}
+
         #endregion
 
         public MainWindowViewModel()
