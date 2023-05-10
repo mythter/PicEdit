@@ -13,6 +13,7 @@
         xmlns:matround="clr-namespace:PicEdit.Fonts.RegularMaterialRound"
         xmlns:vm="clr-namespace:PicEdit.ViewModels"
         xmlns:ext="clr-namespace:PicEdit.Extensions"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:cmd="clr-namespace:PicEdit.Infrastructure.Commands"
         xmlns:local="clr-namespace:PicEdit"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
@@ -37,6 +38,9 @@
         <mat:IconImage x:Key="ChainOnIcon" Icon="Link_Off" Width="20" Foreground="DarkGray"/>
         <mat:IconImage x:Key="ChainOffIcon" Icon="Link" Width="20" Foreground="DarkGray"/>
 
+        <!--#region Boolean to visibility converter-->
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <!--#endregion-->
 
         <!--#region MenuItem template -->
         <LinearGradientBrush x:Key="MenuItemSelectionFill" EndPoint="0,1" StartPoint="0,0">
@@ -898,10 +902,11 @@
                                     <mat:IconImage Icon="Rotate_Right" Width="22" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton x:Name="brushTool" Style="{StaticResource {x:Type ToggleButton}}"
+                                <RadioButton x:Name="BrushTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
                                              Background="Transparent"
+                                             IsChecked="{Binding IsBrushToolChecked, Mode=OneWayToSource}"
                                              BorderThickness="0">
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
                                 </RadioButton>
@@ -943,7 +948,7 @@
                                     </Image>
                                 </Grid>-->
 
-                            <Canvas x:Name="Canv"
+                            <Canvas x:Name="Canvas"
                                          Width="{Binding ElementName=MainImg, Path=ActualWidth}"
                                         Height="{Binding ElementName=MainImg, Path=ActualHeight}"
                                         Background="White">
@@ -965,6 +970,15 @@
                                         <RotateTransform Angle="{Binding AngleValue}"/>
                                     </Image.RenderTransform>
                                 </Image>
+
+                                <InkCanvas x:Name="DrawCanvas"
+                                        Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                                        Height="{Binding ElementName=MainImg, Path=ActualHeight}"
+                                        Background="Transparent"
+                                        EditingMode="{Binding InkCanvasEditingMode}"
+                                        DefaultDrawingAttributes="{Binding InkCanvasDefaultDrawingAttributes}">
+                                </InkCanvas>
+                                
                             </Canvas>
                             <!--</Viewbox>-->
                         </ScrollViewer>
@@ -975,35 +989,33 @@
                                           HorizontalAlignment="Center"
                                           Background="{DynamicResource DarkGrey}"/>
 
-                        <Grid Grid.Row="1" Grid.Column="3" Background="{DynamicResource Grey}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="0.5*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <Grid Grid.Row="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                        <Grid Grid.Row="1" Grid.Column="3"
+                              Background="{DynamicResource Grey}">
+                            
+                            <Grid Grid.Row="0"
+                                  Visibility="{Binding IsScaleEnabled, Converter={StaticResource BoolToVis}}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="0.7*"/>
+                                        <RowDefinition Height="0.5*"/>
+                                        <RowDefinition Height="0.5*"/>
+                                        <RowDefinition Height="0.5*"/>
+                                        <RowDefinition Height="2*"/>
                                 </Grid.RowDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="6*"/>
-                                </Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="6*"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Scaling"
-                                           Grid.Row="0" Grid.Column="1"                                        
+                                    <TextBlock Text="Scaling"
+                                           Grid.Row="1" Grid.Column="0"    Grid.ColumnSpan="2"                                     
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
+                                           VerticalAlignment="Top"
                                            Foreground="{DynamicResource DarkGray}"
-                                           FontSize="13"/>
+                                           FontSize="16"/>
 
-                                <Slider Grid.Row="1" Grid.Column="1"
+                                    <Slider Grid.Row="2" Grid.Column="1"
                                     Minimum="1"
                                     Maximum="100"
                                     Height="20"
@@ -1014,7 +1026,7 @@
                                     IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
-                                <Slider Grid.Row="3" Grid.Column="1"
+                                    <Slider Grid.Row="4" Grid.Column="1"
                                     Minimum="1"
                                     Maximum="100"
                                     Height="20"
@@ -1025,65 +1037,69 @@
                                     IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
-                                <ToggleButton IsChecked="{Binding IsScaleChecked}"
-                                          Grid.Row="2" Grid.Column="1"
+                                    <ToggleButton IsChecked="{Binding IsScaleChecked}"
+                                          Grid.Row="3"                                            
+                                          Grid.Column="1"
                                           IsEnabled="{Binding IsScaleEnabled}"
                                           Width="25"
                                           Height="20"
                                           Background="Transparent"
                                           BorderThickness="0">
-                                    <ToggleButton.Style>
-                                        <Style TargetType="{x:Type ToggleButton}">
-                                            <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
-                                            <Style.Triggers>
-                                                <Trigger Property="IsChecked" Value="true">
-                                                    <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                </ToggleButton>
+                                        <ToggleButton.Style>
+                                            <Style TargetType="{x:Type ToggleButton}">
+                                                <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsChecked" Value="true">
+                                                        <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
+                                    </ToggleButton>
 
-                                <TextBlock Grid.Row="1"
+                                    <TextBlock Grid.Row="2"
                                        Grid.Column="0"
                                            Text="W:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
 
-                                <TextBlock Grid.Row="3"
+                                    <TextBlock Grid.Row="4"
                                        Grid.Column="0"
                                            Text="H:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
-                            </Grid>
-                            
-                            <Separator Grid.Row="1"
+                                </Grid>
+
+                                <!--<Separator Grid.Row="1"
                                        VerticalAlignment="Top"
                                        Background="#606060"
-                                       Margin="0, 8, 0, 0"/>
-                            
-                            <Grid Grid.Row="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                                       Margin="0, 3, 0, 0"/>-->
+
+                                <Grid Grid.Row="0"
+                                      Visibility="{Binding IsRotationEnabled, Converter={StaticResource BoolToVis}}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"/>
+                                        <RowDefinition Height="0.6*"/>
+                                        <RowDefinition Height="0.5*"/>
+                                        <RowDefinition Height="2*"/>
                                 </Grid.RowDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="6*"/>
-                                </Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="6*"/>
+                                    </Grid.ColumnDefinitions>
 
 
-                                <TextBlock Text="Rotation"
-                                           Grid.Row="0" Grid.Column="1"                                        
+                                    <TextBlock Text="Rotation"
+                                           Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                                   
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
+                                           VerticalAlignment="Top"
                                            Foreground="{DynamicResource DarkGray}"
-                                           FontSize="13"/>
+                                           FontSize="16"/>
 
-                                <Slider Grid.Row="1" Grid.Column="1"
+                                    <Slider Grid.Row="2" Grid.Column="1"
                                         x:Name="RotationSlider"
                                     Minimum="0"
                                     Maximum="360"
@@ -1097,14 +1113,121 @@
                                     IsEnabled="{Binding IsRotationEnabled}"
                                     Visibility="Visible"/>
 
-                                <TextBlock Grid.Row="1"
+                                    <TextBlock Grid.Row="2"
                                        Grid.Column="0"
                                            Text="{Binding ElementName=RotationSlider, Path=Value}"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
-                            </Grid>
+                                </Grid>
 
+
+                            <Grid Grid.Row="0"
+                                      Visibility="{Binding IsPaintEnabled, Converter={StaticResource BoolToVis}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+
+                                <TextBlock Text="Painting"
+                                           Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5"                                        
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Top"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="16"/>
+
+                                <RadioButton x:Name="PenTool" 
+                                             Grid.Row="2" Grid.Column="1"
+                                             Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="38" Height="30"
+                                             Background="Transparent"
+                                             IsChecked="{Binding IsSelectToolChecked}"
+                                             BorderThickness="0">
+                                    <phos:IconImage Icon="Cursor" Width="20" Foreground="DarkGray"/>
+                                </RadioButton>
+
+                                <RadioButton x:Name="SelectTool" 
+                                             Grid.Row="2" Grid.Column="2"
+                                             Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="38" Height="30"
+                                             Background="Transparent"
+                                             IsChecked="{Binding IsPenToolChecked}"
+                                             BorderThickness="0">
+                                    <phos:IconImage Icon="PencilSimpleLine" Width="20" Foreground="DarkGray"/>
+                                </RadioButton>
+
+                                <RadioButton x:Name="EraserTool" 
+                                             Grid.Row="2" Grid.Column="3"
+                                             Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 5"
+                                             Width="38" Height="30"
+                                             Background="Transparent"
+                                             IsChecked="{Binding IsEraserToolChecked}"
+                                             BorderThickness="0">
+                                    <phos:IconImage Icon="Eraser" Width="22" Foreground="DarkGray"/>
+                                </RadioButton>
+
+                                <TextBlock Text="Thickness"
+                                           Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5"                                        
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="14"/>
+                                
+                                <Slider Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5"
+                                        x:Name="PenThicknessSLider"
+                                    Minimum="1"
+                                    Maximum="20"
+                                    IsSnapToTickEnabled="True"
+                                    TickFrequency="1"
+                                    Height="20"
+                                    MaxWidth="350"
+                                    Margin="26, 1, 8, 4"
+                                    IsSelectionRangeEnabled="True"
+                                    Value="{Binding ThicknessValue}"
+                                    IsEnabled="{Binding IsPaintEnabled}"
+                                    Visibility="Visible"/>
+
+                                <TextBlock Grid.Row="4"
+                                       Grid.Column="0"
+                                           Text="{Binding ElementName=PenThicknessSLider, Path=Value}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"
+                                           Margin="10, 0, 0, 0"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource DarkGray}"/>
+
+                                <TextBlock Text="Color"
+                                           Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5"                                        
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="14"/>
+
+                                <xctk:ColorPicker Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="5"
+                                                  Height="25"
+                                                  Margin="10, 0"
+                                                  SelectedColor="{Binding ColorPickerSelectedColor}"/>
+
+
+                            </Grid>
 
                         </Grid>
 

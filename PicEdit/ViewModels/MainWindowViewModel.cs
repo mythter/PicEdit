@@ -3,19 +3,17 @@ using PicEdit.ViewModels.Base;
 using System;
 using System.Windows;
 using Forms = System.Windows.Forms;
+using EditingMode = System.Windows.Controls.InkCanvasEditingMode;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.IO;
-using Microsoft.VisualBasic;
-using System.Windows.Shapes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
-using static System.Windows.Forms.DataFormats;
 using System.Windows.Media;
-using System.Collections.Generic;
-using System.Windows.Media.Media3D;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows.Ink;
+using System.Windows.Forms;
 
 namespace PicEdit.ViewModels
 {
@@ -315,6 +313,175 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
+        #region Editing mode of InkCanvas
+        private InkCanvasEditingMode _inkCanvasEditingMode = EditingMode.None;
+
+        /// <summary>
+        /// Editing mode of InkCanvas.
+        /// </summary>
+        public InkCanvasEditingMode InkCanvasEditingMode
+        {
+            get => _inkCanvasEditingMode;
+            set => Set(ref _inkCanvasEditingMode, value);
+        }
+        #endregion
+
+        #region InkCanvas Default Drawing Attributes
+        private DrawingAttributes _inkCanvasDefaultDrawingAttributes = new()
+        {
+            Color = Colors.Black,
+            Height = 2,
+            Width = 2
+        };
+
+        /// <summary>
+        /// InkCanvas default drawing attributes.
+        /// </summary>
+        public DrawingAttributes InkCanvasDefaultDrawingAttributes
+        {
+            get => _inkCanvasDefaultDrawingAttributes;
+            set => Set(ref _inkCanvasDefaultDrawingAttributes, value);
+        }
+        #endregion
+
+        #region Is Select Tool Checked
+        private bool _isSelectToolChecked;
+
+        /// <summary>
+        /// Is select tool checked.
+        /// </summary>
+        public bool IsSelectToolChecked
+        {
+            get => _isSelectToolChecked;
+            set
+            {
+                Set(ref _isSelectToolChecked, value);
+                if (IsSelectToolChecked)
+                    InkCanvasEditingMode = EditingMode.Select;
+            }
+        }
+        #endregion
+
+        #region Is Pen Tool Checked
+        private bool _isPenToolChecked;
+
+        /// <summary>
+        /// Is pen tool checked.
+        /// </summary>
+        public bool IsPenToolChecked
+        {
+            get => _isPenToolChecked;
+            set
+            {
+                Set(ref _isPenToolChecked, value);
+                if (IsPenToolChecked)
+                    InkCanvasEditingMode = EditingMode.Ink;
+                    
+            }
+        }
+        #endregion
+
+        #region Is Eraser Tool Checked
+        private bool _isEraserToolChecked;
+
+        /// <summary>
+        /// Is eraser tool checked.
+        /// </summary>
+        public bool IsEraserToolChecked
+        {
+            get => _isEraserToolChecked;
+            set
+            {
+                Set(ref _isEraserToolChecked, value);
+                if (IsEraserToolChecked)
+                    InkCanvasEditingMode = EditingMode.EraseByPoint;
+            }
+        }
+        #endregion
+
+        #region Color Picker Selected Color
+        private System.Windows.Media.Color _colorPickerSelectedColor = Colors.Black;
+
+        /// <summary>
+        /// Color picker selected color.
+        /// </summary>
+        public System.Windows.Media.Color ColorPickerSelectedColor
+        {
+            get => _colorPickerSelectedColor;
+            set
+            {
+                Set(ref _colorPickerSelectedColor, value);
+                InkCanvasDefaultDrawingAttributes.Color = ColorPickerSelectedColor;
+            }
+        }
+        #endregion
+
+        #region Is Thickness Enabled
+        private bool _isPaintEnabled = false;
+
+        /// <summary>
+        /// Is Rotation Slider Enabled
+        /// </summary>
+        public bool IsPaintEnabled
+        {
+            get => _isPaintEnabled;
+            set
+            {
+                Set(ref _isPaintEnabled, value);
+            }
+        }
+        #endregion
+
+        #region Is Brush Tool Checked
+        private bool _isBrushToolChecked;
+
+        /// <summary>
+        /// Is brush tool checked
+        /// </summary>
+        public bool IsBrushToolChecked
+        {
+            get => _isBrushToolChecked;
+            set
+            {
+                Set(ref _isBrushToolChecked, value);
+                if (IsBrushToolChecked && IsSaveEnabled)
+                    IsPaintEnabled = true;
+                else
+                    IsPaintEnabled = false;
+
+                //if (!IsRotationToolChecked && Image != null && AngleValue != 0)
+                //{
+                //    int count = obCollection.Count;
+                //    if (position != count - 1)
+                //        for (int i = count - 1; i > position; i--)
+                //            obCollection.RemoveAt(i);
+
+                //    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
+                //    Image = obCollection[++position];
+                //    AngleValue = 0;
+                //}
+            }
+        }
+        #endregion
+
+        #region Pen Tool Thickness Value
+        private int _thicknessValue = 1;
+
+        /// <summary>
+        /// Angle value of main image
+        /// </summary>
+        public int ThicknessValue
+        {
+            get => _thicknessValue;
+            set
+            {
+                Set(ref _thicknessValue, value);
+                InkCanvasDefaultDrawingAttributes.Width = ThicknessValue;
+                InkCanvasDefaultDrawingAttributes.Height = ThicknessValue;
+            }
+        }
+        #endregion
+
         #region Commands
 
         #region CloseApplicationCommand
@@ -325,7 +492,7 @@ namespace PicEdit.ViewModels
         private void OnCloseApplicationCommandExecuted(object p)
         {
             imageStream?.Close();
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
         #endregion
 
