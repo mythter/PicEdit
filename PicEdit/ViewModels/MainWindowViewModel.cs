@@ -13,6 +13,9 @@ using System.Windows.Shapes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using static System.Windows.Forms.DataFormats;
 using System.Windows.Media;
+using System.Collections.Generic;
+using System.Windows.Media.Media3D;
+using System.Collections.ObjectModel;
 
 namespace PicEdit.ViewModels
 {
@@ -40,6 +43,8 @@ namespace PicEdit.ViewModels
         #endregion
 
         Stream imageStream;
+        ObservableCollection<BitmapSource> obCollection;
+        int position = -1;
 
         #region MainImage
         private BitmapSource _image;
@@ -107,12 +112,17 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _isRotationToolChecked, value);
-                if (!IsRotationToolChecked)
+                if (!IsRotationToolChecked && Image != null && AngleValue != 0)
                 {
-                    Image = new TransformedBitmap(Image, new RotateTransform(AngleValue));
+                    int count = obCollection.Count;
+                    if (position != count - 1)
+                        for (int i = count - 1; i > position; i--)
+                            obCollection.RemoveAt(i);
+
+                    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
+                    Image = obCollection[++position];
                     AngleValue = 0;
                 }
-
             }
         }
         #endregion
@@ -128,9 +138,15 @@ namespace PicEdit.ViewModels
             get => _isScaleToolChecked;
             set
             {
-                if (SliderXValue != 100 || SliderYValue != 100)
+                if ((SliderXValue != 100 || SliderYValue != 100) && Image != null)
                 {
-                    Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
+                    int count = obCollection.Count;
+                    if (position != count - 1)
+                        for (int i = count - 1; i > position; i--)
+                            obCollection.RemoveAt(i);
+
+                    obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
+                    Image = obCollection[++position];
                     SliderXValue = 100;
                     SliderYValue = 100;
                 }
@@ -280,7 +296,8 @@ namespace PicEdit.ViewModels
                 imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
                 string format = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
                 _format = ToImageFormat(format);
- 
+                _path = open.FileName;
+
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.StreamSource = imageStream;
@@ -289,7 +306,9 @@ namespace PicEdit.ViewModels
                 bitmap.Freeze();
                 Image = bitmap;
 
-                _path = open.FileName;
+                obCollection.Add(Image);
+                ++position;
+
                 OnPropertyChanged(nameof(Image));
             }
             ZoomValue = 0.7;
@@ -450,6 +469,34 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
+        #region UndoCommand
+        public ICommand UndoCommand { get; }
+
+        private bool OnUndoCommandExecute(object p) => true;
+
+        private void OnUndoCommandExecuted(object p)
+        {
+            if (position > 0)
+            {
+                Image = obCollection[--position];
+            }
+        }
+        #endregion
+
+        #region RedoCommand
+        public ICommand RedoCommand { get; }
+
+        private bool OnRedoCommandExecute(object p) => true;
+
+        private void OnRedoCommandExecuted(object p)
+        {
+            if (position < obCollection.Count - 1)
+            {
+                Image = obCollection[++position];
+            }
+        }
+        #endregion
+
         #endregion
 
         #region Functions
@@ -486,19 +533,31 @@ namespace PicEdit.ViewModels
             return bmp;
         }
 
-        private void SaveImage(string path,  ImageFormat format)
+        private void SaveImage(string path, ImageFormat format)
         {
             if (imageStream != null)
             {
-                if(SliderXValue != 100 || SliderYValue != 100)
+                if (SliderXValue != 100 || SliderYValue != 100)
                 {
-                    Image = new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue));
+                    int count = obCollection.Count;
+                    if (position != count - 1)
+                        for (int i = count - 1; i > position; i--)
+                            obCollection.RemoveAt(i);
+
+                    obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
+                    Image = obCollection[++position];
                     SliderXValue = 100;
                     SliderYValue = 100;
-                }                  
-                if(AngleValue != 0)
+                }
+                if (AngleValue != 0)
                 {
-                    Image = new TransformedBitmap(Image, new RotateTransform(AngleValue));
+                    int count = obCollection.Count;
+                    if (position != count - 1)
+                        for (int i = count - 1; i > position; i--)
+                            obCollection.RemoveAt(i);
+
+                    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
+                    Image = obCollection[++position];
                     AngleValue = 0;
                 }
                 imageStream = StreamFromBitmapSource(Image);
@@ -524,6 +583,8 @@ namespace PicEdit.ViewModels
 
         public MainWindowViewModel()
         {
+            obCollection = new ObservableCollection<BitmapSource>();
+
             #region Commands
 
             CloseApplicationCommand = new LambdaCommand(OnCloseApplicationCommandExecuted, OnCloseApplicationCommandExecute);
@@ -541,6 +602,10 @@ namespace PicEdit.ViewModels
             SaveAsCommand = new LambdaCommand(OnSaveAsCommandExecuted, OnSaveAsCommandExecute);
 
             SaveCommand = new LambdaCommand(OnSaveCommandExecuted, OnSaveCommandExecute);
+
+            UndoCommand = new LambdaCommand(OnUndoCommandExecuted, OnUndoCommandExecute);
+
+            RedoCommand = new LambdaCommand(OnRedoCommandExecuted, OnRedoCommandExecute);
 
             #endregion
         }
