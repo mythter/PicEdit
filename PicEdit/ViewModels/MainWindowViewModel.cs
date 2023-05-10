@@ -112,6 +112,12 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _isRotationToolChecked, value);
+
+                if (IsRotationToolChecked && IsSaveEnabled)
+                    IsRotationEnabled = true;
+                else
+                    IsRotationEnabled = false;
+
                 if (!IsRotationToolChecked && Image != null && AngleValue != 0)
                 {
                     int count = obCollection.Count;
@@ -138,6 +144,13 @@ namespace PicEdit.ViewModels
             get => _isScaleToolChecked;
             set
             {
+                Set(ref _isScaleToolChecked, value);
+
+                if (IsScaleToolChecked && IsSaveEnabled)
+                    IsScaleEnabled = true;
+                else
+                    IsScaleEnabled = false;
+
                 if ((SliderXValue != 100 || SliderYValue != 100) && Image != null)
                 {
                     int count = obCollection.Count;
@@ -225,7 +238,42 @@ namespace PicEdit.ViewModels
         public bool IsSaveEnabled
         {
             get => _isSaveEnabled;
-            set => Set(ref _isSaveEnabled, value);
+            set
+            {
+                Set(ref _isSaveEnabled, value);
+            }
+        }
+        #endregion
+
+        #region Is Rotation Enabled
+        private bool _isRotationEnabled = false;
+
+        /// <summary>
+        /// Is Rotation Slider Enabled
+        /// </summary>
+        public bool IsRotationEnabled
+        {
+            get => _isRotationEnabled;
+            set
+            {
+                Set(ref _isRotationEnabled, value);
+            }
+        }
+        #endregion
+
+        #region Is Scale Enabled
+        private bool _isScaleEnabled = false;
+
+        /// <summary>
+        /// Is Scale Slider Enabled
+        /// </summary>
+        public bool IsScaleEnabled
+        {
+            get => _isScaleEnabled;
+            set
+            {
+                Set(ref _isScaleEnabled, value);
+            }
         }
         #endregion
 
@@ -242,7 +290,7 @@ namespace PicEdit.ViewModels
             {
                 Set(ref _sliderXValue, value);
                 ScaleXValue = SliderXValue / 100f;
-                if (IsScaleChecked && SliderYValue != SliderXValue)
+                if (IsSaveEnabled && IsScaleChecked && SliderYValue != SliderXValue)
                     SliderYValue = SliderXValue;
             }
         }
@@ -261,7 +309,7 @@ namespace PicEdit.ViewModels
             {
                 Set(ref _sliderYValue, value);
                 ScaleYValue = SliderYValue / 100f;
-                if (IsScaleChecked && SliderXValue != SliderYValue)
+                if (IsSaveEnabled && IsScaleChecked && SliderXValue != SliderYValue)
                     SliderXValue = SliderYValue;
             }
         }

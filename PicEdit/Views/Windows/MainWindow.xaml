@@ -888,14 +888,7 @@
                                     <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
-                                <RadioButton x:Name="CropTool" Style="{StaticResource {x:Type ToggleButton}}"
-                                             Margin="0, 1"
-                                             Width="30" Height="30"
-                                             Background="Transparent"
-                                             BorderThickness="0">
-                                    <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
-                                </RadioButton>
-                                <Separator Background="#606060"/>
+
                                 <RadioButton x:Name="RotationTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
@@ -911,6 +904,14 @@
                                              Background="Transparent"
                                              BorderThickness="0">
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
+                                </RadioButton>
+                                <Separator Background="#606060"/>
+                                <RadioButton x:Name="CropTool" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="38" Height="30"
+                                             Background="Transparent"
+                                             BorderThickness="0">
+                                    <Image Source="/Images/RGB.png" Height="14"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="ColorTool" Style="{StaticResource {x:Type ToggleButton}}"
@@ -1010,7 +1011,7 @@
                                     Margin="8, 0, 8, 4"
                                     IsSelectionRangeEnabled="True"
                                     Value="{Binding SliderXValue}"
-                                    IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
+                                    IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
                                 <Slider Grid.Row="3" Grid.Column="1"
@@ -1021,12 +1022,12 @@
                                     Margin="8, 4, 8, 0"
                                     IsSelectionRangeEnabled="True"
                                     Value="{Binding SliderYValue}"
-                                    IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
+                                    IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
                                 <ToggleButton IsChecked="{Binding IsScaleChecked}"
                                           Grid.Row="2" Grid.Column="1"
-                                          IsEnabled="{Binding ElementName=ScaleTool, Path=IsChecked}"
+                                          IsEnabled="{Binding IsScaleEnabled}"
                                           Width="25"
                                           Height="20"
                                           Background="Transparent"
@@ -1057,8 +1058,13 @@
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
                             </Grid>
-
-                            <Grid Grid.Row="2">
+                            
+                            <Separator Grid.Row="1"
+                                       VerticalAlignment="Top"
+                                       Background="#606060"
+                                       Margin="0, 8, 0, 0"/>
+                            
+                            <Grid Grid.Row="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
@@ -1088,7 +1094,7 @@
                                     Margin="8, 0, 8, 4"
                                     IsSelectionRangeEnabled="True"
                                     Value="{Binding AngleValue}"
-                                    IsEnabled="{Binding ElementName=RotationTool, Path=IsChecked}"
+                                    IsEnabled="{Binding IsRotationEnabled}"
                                     Visibility="Visible"/>
 
                                 <TextBlock Grid.Row="1"

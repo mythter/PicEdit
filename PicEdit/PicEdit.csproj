@@ -33,6 +33,7 @@
     <None Remove="Images\JPG.svg" />
     <None Remove="Images\PNG.png" />
     <None Remove="Images\PNG.svg" />
+    <None Remove="Images\RGB.png" />
     <None Remove="Images\TIFF.png" />
     <None Remove="Images\TIFF.svg" />
   </ItemGroup>
@@ -59,6 +60,7 @@
     <Resource Include="Images\ICON.png" />
     <Resource Include="Images\JPG.png" />
     <Resource Include="Images\PNG.png" />
+    <Resource Include="Images\RGB.png" />
     <Resource Include="Images\TIFF.png" />
   </ItemGroup>
 
