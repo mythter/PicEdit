@@ -375,8 +375,7 @@ namespace PicEdit.ViewModels
             {
                 Set(ref _isPenToolChecked, value);
                 if (IsPenToolChecked)
-                    InkCanvasEditingMode = EditingMode.Ink;
-                    
+                    InkCanvasEditingMode = EditingMode.Ink;                   
             }
         }
         #endregion
@@ -393,8 +392,46 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _isEraserToolChecked, value);
-                if (IsEraserToolChecked)
+                if (IsEraserToolChecked && IsFullEraserChecked)
+                    InkCanvasEditingMode = EditingMode.EraseByStroke;
+                else if(IsEraserToolChecked && IsPartialEraserChecked)
                     InkCanvasEditingMode = EditingMode.EraseByPoint;
+            }
+        }
+        #endregion
+
+        #region Is Partial Eraser Type Checked
+        private bool _isPartialEraserChecked = true;
+
+        /// <summary>
+        /// Is eraser partial stroke type checked.
+        /// </summary>
+        public bool IsPartialEraserChecked
+        {
+            get => _isPartialEraserChecked;
+            set
+            {
+                Set(ref _isPartialEraserChecked, value);
+                if (IsEraserToolChecked && IsPartialEraserChecked)
+                    InkCanvasEditingMode = EditingMode.EraseByPoint;
+            }
+        }
+        #endregion
+
+        #region Is Full Eraser Type Checked
+        private bool _isFullEraserChecked;
+
+        /// <summary>
+        /// Is eraser full stroke type checked.
+        /// </summary>
+        public bool IsFullEraserChecked
+        {
+            get => _isFullEraserChecked;
+            set
+            {
+                Set(ref _isFullEraserChecked, value);
+                if (IsEraserToolChecked && IsFullEraserChecked)
+                    InkCanvasEditingMode = EditingMode.EraseByStroke;
             }
         }
         #endregion
