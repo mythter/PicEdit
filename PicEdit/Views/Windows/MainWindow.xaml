@@ -14,6 +14,7 @@
         xmlns:vm="clr-namespace:PicEdit.ViewModels"
         xmlns:ext="clr-namespace:PicEdit.Extensions"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:beh="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:cmd="clr-namespace:PicEdit.Infrastructure.Commands"
         xmlns:local="clr-namespace:PicEdit"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
@@ -909,6 +910,13 @@
                                              IsChecked="{Binding IsBrushToolChecked, Mode=OneWayToSource}"
                                              BorderThickness="0">
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
+
+                                    <beh:Interaction.Triggers>
+                                        <beh:EventTrigger EventName="Unchecked">
+                                            <beh:InvokeCommandAction Command="{Binding IsBrushToolCheckedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                        </beh:EventTrigger>
+                                    </beh:Interaction.Triggers>
+
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="CropTool" Style="{StaticResource {x:Type ToggleButton}}"
@@ -974,10 +982,29 @@
                                 <InkCanvas x:Name="DrawCanvas"
                                         Width="{Binding ElementName=MainImg, Path=ActualWidth}"
                                         Height="{Binding ElementName=MainImg, Path=ActualHeight}"
-                                        Background="Transparent"
+                                        Visibility="{Binding IsInkCanvasVisible, Converter={StaticResource BoolToVis}}"
                                         EditingMode="{Binding InkCanvasEditingMode}"
                                         DefaultDrawingAttributes="{Binding InkCanvasDefaultDrawingAttributes}"
-                                          >
+                                        Strokes="{Binding InkCanvasStrokes}">
+
+                                    <InkCanvas.Background>
+                                        <ImageBrush ImageSource="{Binding Image}"></ImageBrush>
+                                    </InkCanvas.Background>
+
+                                    <beh:Interaction.Triggers>
+                                        <beh:EventTrigger EventName="StrokeCollected" SourceObject="{Binding ElementName=DrawCanvas}">
+                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                        </beh:EventTrigger>
+                                        <beh:EventTrigger EventName="StrokeErased" SourceObject="{Binding ElementName=DrawCanvas}">
+                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                        </beh:EventTrigger>
+                                        <!--<beh:EventTrigger EventName="Unchecked" SourceObject="{Binding ElementName=BrushTool}">
+                                            <beh:InvokeCommandAction Command="{Binding IsBrushToolCheckedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                        </beh:EventTrigger>-->
+                                    </beh:Interaction.Triggers>
+
+                                    <!--<ContentControl Content="{Binding DrawCanvas}"/>-->
+
                                 </InkCanvas>
                                 
                             </Canvas>

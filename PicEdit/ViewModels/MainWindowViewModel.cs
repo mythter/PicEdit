@@ -14,6 +14,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Forms;
+using System.Collections.Specialized;
+using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
 
 namespace PicEdit.ViewModels
 {
@@ -43,6 +46,8 @@ namespace PicEdit.ViewModels
         Stream imageStream;
         ObservableCollection<BitmapSource> obCollection;
         int position = -1;
+        ObservableCollection<StrokeCollection> obStrokeCollection;
+        int strPos = -1;
 
         #region MainImage
         private BitmapSource _image;
@@ -54,9 +59,9 @@ namespace PicEdit.ViewModels
         {
             get => _image;
             set
-            {
-                IsSaveEnabled = true;
+            {                
                 Set(ref _image, value);
+                IsSaveEnabled = true;
             }
         }
         #endregion
@@ -482,21 +487,12 @@ namespace PicEdit.ViewModels
             {
                 Set(ref _isBrushToolChecked, value);
                 if (IsBrushToolChecked && IsSaveEnabled)
+                {
                     IsPaintEnabled = true;
+                    IsInkCanvasVisible = true;
+                }
                 else
                     IsPaintEnabled = false;
-
-                //if (!IsRotationToolChecked && Image != null && AngleValue != 0)
-                //{
-                //    int count = obCollection.Count;
-                //    if (position != count - 1)
-                //        for (int i = count - 1; i > position; i--)
-                //            obCollection.RemoveAt(i);
-
-                //    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
-                //    Image = obCollection[++position];
-                //    AngleValue = 0;
-                //}
             }
         }
         #endregion
@@ -516,6 +512,32 @@ namespace PicEdit.ViewModels
                 InkCanvasDefaultDrawingAttributes.Width = ThicknessValue;
                 InkCanvasDefaultDrawingAttributes.Height = ThicknessValue;
             }
+        }
+        #endregion
+
+        #region InkCanvas Strokes
+        private StrokeCollection _inkCanvasStrokes;
+
+        /// <summary>
+        /// InkCanvas Stroke Collection.
+        /// </summary>
+        public StrokeCollection InkCanvasStrokes
+        {
+            get => _inkCanvasStrokes;
+            set => Set(ref _inkCanvasStrokes, value);
+        }
+        #endregion
+
+        #region InkCanvas Strokes
+        private bool _isInkCanvasVisible;
+
+        /// <summary>
+        /// InkCanvas Stroke Collection.
+        /// </summary>
+        public bool IsInkCanvasVisible
+        {
+            get => _isInkCanvasVisible;
+            set => Set(ref _isInkCanvasVisible, value);
         }
         #endregion
 
@@ -728,9 +750,12 @@ namespace PicEdit.ViewModels
 
         private void OnUndoCommandExecuted(object p)
         {
-            if (position > 0)
+            if (position > 0 || strPos > 0)
             {
-                Image = obCollection[--position];
+                if (IsBrushToolChecked && obStrokeCollection.Count > 0 && strPos > 0)
+                    InkCanvasStrokes = new StrokeCollection(obStrokeCollection[--strPos]);
+                else if(!IsBrushToolChecked && position > 0)
+                    Image = obCollection[--position];
             }
         }
         #endregion
@@ -742,10 +767,45 @@ namespace PicEdit.ViewModels
 
         private void OnRedoCommandExecuted(object p)
         {
-            if (position < obCollection.Count - 1)
+            if (position < obCollection.Count - 1 || strPos < obStrokeCollection.Count - 1)
             {
-                Image = obCollection[++position];
+                if (IsBrushToolChecked && obStrokeCollection.Count > 0 && strPos < obStrokeCollection.Count - 1)
+                    InkCanvasStrokes = new StrokeCollection(obStrokeCollection[++strPos]);
+                else if (!IsBrushToolChecked && position < obCollection.Count - 1)
+                    Image = obCollection[++position];
             }
+        }
+        #endregion
+
+        #region IsBrushToolCheckedCommand
+        public ICommand IsBrushToolCheckedCommand { get; }
+
+        private bool OnIsBrushToolCheckedCommandExecute(object p) => true;
+
+        private void OnIsBrushToolCheckedCommandExecuted(object p)
+        {
+            if (Image != null && obStrokeCollection.Count > 1)
+            {
+                InkCanvas ink = p as InkCanvas;
+                obCollection.Add(ConvertInkCanvasToBitmapSource(ink));
+                Image = obCollection[++position];
+                InkCanvasStrokes.Clear();
+                obStrokeCollection.Clear();
+                obStrokeCollection.Add(new StrokeCollection());
+            }
+            IsInkCanvasVisible = false;
+        }
+        #endregion
+
+        #region StrokeChangedCommand
+        public ICommand StrokeChangedCommand { get; }
+
+        private bool OnStrokeChangedCommandExecute(object p) => true;
+
+        private void OnStrokeChangedCommandExecuted(object p)
+        {
+            obStrokeCollection.Add(new StrokeCollection(InkCanvasStrokes));
+            ++strPos;
         }
         #endregion
 
@@ -818,6 +878,79 @@ namespace PicEdit.ViewModels
             }
         }
 
+        private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas drawCanvas)
+        {
+            //string newImagePath = "./strokes.png";
+            //InkCanvas inkCanvas = drawCanvas;
+            //ImageBrush imageBrush = new ImageBrush();
+            //imageBrush.ImageSource = obCollection[obCollection.Count - 1];
+            //drawCanvas.Background = imageBrush;
+
+            //using (FileStream fs = new FileStream(newImagePath, FileMode.Create))
+            //{
+            //    var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
+            //    rtb.Render(drawCanvas);
+            //    PngBitmapEncoder encoder = new PngBitmapEncoder();
+            //    encoder.Frames.Add(BitmapFrame.Create(rtb));
+            //    encoder.Save(fs);
+            //}
+            //return new BitmapImage();
+            //creating temporary InkCanvas
+            //InkCanvas inkCanvas = drawCanvas;
+            //ImageBrush imageBrush = new ImageBrush();
+            //imageBrush.ImageSource = obCollection[obCollection.Count - 1];
+            //drawCanvas.Background = imageBrush;
+            //inkCanvas.Width = Image.Width;
+            //inkCanvas.Height = Image.Height;
+
+            //render bitmap
+            //RenderTargetBitmap rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96, 96, PixelFormats.Default);
+            //rtb.Render(drawCanvas);
+            //PngBitmapEncoder encoder = new PngBitmapEncoder();
+            //encoder.Frames.Add(BitmapFrame.Create(rtb));
+            //rtb.Render(drawCanvas);
+
+
+            var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
+            rtb.Render(drawCanvas);
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(rtb));
+
+            //save to memory stream or file 
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            encoder.Save(ms);
+
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = ms;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+
+
+            //creat bitmap with memory stream or file
+            //Bitmap bitmap = new Bitmap(ms);
+            //return ConvertBitmapToBitmapSource(bitmap);
+        }
+
+        public static BitmapSource ConvertBitmapToBitmapSource(System.Drawing.Bitmap bitmap)
+        {
+            var bitmapData = bitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            var bitmapSource = BitmapSource.Create(
+                bitmapData.Width, bitmapData.Height,
+                bitmap.HorizontalResolution, bitmap.VerticalResolution,
+                PixelFormats.Bgr24, null,
+                bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
+
+            bitmap.UnlockBits(bitmapData);
+
+            return bitmapSource;
+        }
+
         //static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
         //{
         //    int width = bmp.PixelWidth;
@@ -836,6 +969,18 @@ namespace PicEdit.ViewModels
         public MainWindowViewModel()
         {
             obCollection = new ObservableCollection<BitmapSource>();
+            obStrokeCollection = new ObservableCollection<StrokeCollection>
+            {
+                new StrokeCollection()
+            };
+            strPos = 0;
+            _inkCanvasStrokes = new StrokeCollection();
+
+            //(_inkCanvasStrokes as INotifyCollectionChanged).CollectionChanged += delegate
+            //{
+            //    obCollection.Add(ConvertInkCanvasToBitmapSource());
+            //    Image = obCollection[++position];
+            //};
 
             #region Commands
 
@@ -858,6 +1003,10 @@ namespace PicEdit.ViewModels
             UndoCommand = new LambdaCommand(OnUndoCommandExecuted, OnUndoCommandExecute);
 
             RedoCommand = new LambdaCommand(OnRedoCommandExecuted, OnRedoCommandExecute);
+
+            StrokeChangedCommand = new LambdaCommand(OnStrokeChangedCommandExecuted, OnStrokeChangedCommandExecute);
+
+            IsBrushToolCheckedCommand = new LambdaCommand(OnIsBrushToolCheckedCommandExecuted, OnIsBrushToolCheckedCommandExecute);
 
             #endregion
         }
