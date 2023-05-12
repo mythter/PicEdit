@@ -797,11 +797,13 @@
                 <MenuItem Header="Save"
                           Style="{DynamicResource MenuItemStyle1}"
                           IsEnabled="{Binding IsSaveEnabled}"
-                          Command="{Binding SaveCommand}"/>
+                          Command="{Binding SaveCommand}"
+                          CommandParameter="{Binding ElementName=DrawCanvas}"/>
                 <MenuItem Header="Save as"
                           Style="{DynamicResource MenuItemStyle1}"
                           IsEnabled="{Binding IsSaveEnabled}"
-                          Command="{Binding SaveAsCommand}"/>
+                          Command="{Binding SaveAsCommand}"
+                          CommandParameter="{Binding ElementName=DrawCanvas}"/>
                 <Separator/>
                 <MenuItem Header="Exit" Style="{DynamicResource MenuItemStyle1}" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
@@ -847,7 +849,8 @@
                                     DockPanel.Dock="Left" 
                                     Height="20" 
                                     Margin="14, 0, 4, 0"
-                                    Command="{Binding SaveCommand}">
+                                    Command="{Binding SaveCommand}"
+                                    CommandParameter="{Binding ElementName=DrawCanvas}">
                                 <phosfill:IconImage Icon="FloppyDisk" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
                             <Button Background="{x:Null}"
@@ -993,17 +996,12 @@
 
                                     <beh:Interaction.Triggers>
                                         <beh:EventTrigger EventName="StrokeCollected" SourceObject="{Binding ElementName=DrawCanvas}">
-                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" />
                                         </beh:EventTrigger>
                                         <beh:EventTrigger EventName="StrokeErased" SourceObject="{Binding ElementName=DrawCanvas}">
-                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
+                                            <beh:InvokeCommandAction Command="{Binding StrokeChangedCommand}" />
                                         </beh:EventTrigger>
-                                        <!--<beh:EventTrigger EventName="Unchecked" SourceObject="{Binding ElementName=BrushTool}">
-                                            <beh:InvokeCommandAction Command="{Binding IsBrushToolCheckedCommand}" CommandParameter="{Binding ElementName=DrawCanvas}" />
-                                        </beh:EventTrigger>-->
                                     </beh:Interaction.Triggers>
-
-                                    <!--<ContentControl Content="{Binding DrawCanvas}"/>-->
 
                                 </InkCanvas>
                                 
@@ -1019,31 +1017,31 @@
 
                         <Grid Grid.Row="1" Grid.Column="3"
                               Background="{DynamicResource Grey}">
-                            
+
                             <Grid Grid.Row="0"
                                   Visibility="{Binding IsScaleEnabled, Converter={StaticResource BoolToVis}}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="2*"/>
-                                        <RowDefinition Height="0.7*"/>
-                                        <RowDefinition Height="0.5*"/>
-                                        <RowDefinition Height="0.5*"/>
-                                        <RowDefinition Height="0.5*"/>
-                                        <RowDefinition Height="2*"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="2*"/>
                                 </Grid.RowDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="6*"/>
-                                    </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6*"/>
+                                </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="Scaling"
+                                <TextBlock Text="Scaling"
                                            Grid.Row="1" Grid.Column="0"    Grid.ColumnSpan="2"                                     
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Top"
                                            Foreground="{DynamicResource DarkGray}"
                                            FontSize="16"/>
 
-                                    <Slider Grid.Row="2" Grid.Column="1"
+                                <Slider Grid.Row="2" Grid.Column="1"
                                     Minimum="1"
                                     Maximum="100"
                                     Height="20"
@@ -1054,7 +1052,7 @@
                                     IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
-                                    <Slider Grid.Row="4" Grid.Column="1"
+                                <Slider Grid.Row="4" Grid.Column="1"
                                     Minimum="1"
                                     Maximum="100"
                                     Height="20"
@@ -1065,7 +1063,7 @@
                                     IsEnabled="{Binding IsScaleEnabled}"
                                     Visibility="Visible"/>
 
-                                    <ToggleButton IsChecked="{Binding IsScaleChecked}"
+                                <ToggleButton IsChecked="{Binding IsScaleChecked}"
                                           Grid.Row="3"                                            
                                           Grid.Column="1"
                                           IsEnabled="{Binding IsScaleEnabled}"
@@ -1073,39 +1071,34 @@
                                           Height="20"
                                           Background="Transparent"
                                           BorderThickness="0">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="{x:Type ToggleButton}">
-                                                <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="true">
-                                                        <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
+                                    <ToggleButton.Style>
+                                        <Style TargetType="{x:Type ToggleButton}">
+                                            <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="true">
+                                                    <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
 
-                                    <TextBlock Grid.Row="2"
+                                <TextBlock Grid.Row="2"
                                        Grid.Column="0"
                                            Text="W:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
 
-                                    <TextBlock Grid.Row="4"
+                                <TextBlock Grid.Row="4"
                                        Grid.Column="0"
                                            Text="H:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
-                                </Grid>
+                            </Grid>
 
-                                <!--<Separator Grid.Row="1"
-                                       VerticalAlignment="Top"
-                                       Background="#606060"
-                                       Margin="0, 3, 0, 0"/>-->
-
-                                <Grid Grid.Row="0"
+                            <Grid Grid.Row="0"
                                       Visibility="{Binding IsRotationEnabled, Converter={StaticResource BoolToVis}}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="2*"/>
@@ -1151,18 +1144,15 @@
 
 
                             <Grid Grid.Row="0"
-                                      >
+                                  Visibility="{Binding IsPaintEnabled, Converter={StaticResource BoolToVis}}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="0.9*"/>
+                                    <RowDefinition Height="0.8*"/>
                                     <RowDefinition Height="0.7*"/>
                                     <RowDefinition Height="1.2*"/>
                                     <RowDefinition Height="0.8*"/>
                                     <RowDefinition Height="0.7*"/>
-                                    <RowDefinition Height="0.9*"/>
-                                    <RowDefinition Height="0.9*"/>
-                                    <RowDefinition Height="1.3*"/>
                                     <RowDefinition Height="0.7*"/>
-                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
@@ -1183,7 +1173,6 @@
                                            FontSize="16"/>
 
                                 <RadioButton x:Name="PenTool"
-                                             GroupName="Paint Tools"
                                              Grid.Row="2" Grid.Column="1"
                                              Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
@@ -1195,7 +1184,6 @@
                                 </RadioButton>
 
                                 <RadioButton x:Name="SelectTool" 
-                                             GroupName="Paint Tools"
                                              Grid.Row="2" Grid.Column="2"
                                              Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
@@ -1207,7 +1195,6 @@
                                 </RadioButton>
 
                                 <RadioButton x:Name="EraserTool"
-                                             GroupName="Paint Tools"
                                              Grid.Row="2" Grid.Column="3"
                                              Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
@@ -1259,31 +1246,6 @@
                                                   Height="25"
                                                   Margin="10, 0"
                                                   SelectedColor="{Binding ColorPickerSelectedColor}"/>
-
-                                <TextBlock Text="Eraser type"
-                                           Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="5"                                        
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource DarkGray}"
-                                           FontSize="14"/>
-
-                                <RadioButton Content="Partial Stroke"
-                                             GroupName="Eraser Types"
-                                             Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="5"
-                                             FontSize="13"
-                                             Margin="10, 0, 0, 0"
-                                             IsChecked="{Binding IsPartialEraserChecked}"
-                                             VerticalAlignment="Center"
-                                             Foreground="{DynamicResource DarkGray}"/>
-
-                                <RadioButton Content="Full Stroke"
-                                             GroupName="Eraser Types"
-                                             Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="5"
-                                             FontSize="13"
-                                             Margin="10, 0, 0, 0"
-                                             IsChecked="{Binding IsFullEraserChecked}"
-                                             VerticalAlignment="Center"
-                                             Foreground="{DynamicResource DarkGray}"/>
 
                             </Grid>
 

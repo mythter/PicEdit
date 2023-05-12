@@ -59,7 +59,7 @@ namespace PicEdit.ViewModels
         {
             get => _image;
             set
-            {                
+            {
                 Set(ref _image, value);
                 IsSaveEnabled = true;
             }
@@ -380,7 +380,7 @@ namespace PicEdit.ViewModels
             {
                 Set(ref _isPenToolChecked, value);
                 if (IsPenToolChecked)
-                    InkCanvasEditingMode = EditingMode.Ink;                   
+                    InkCanvasEditingMode = EditingMode.Ink;
             }
         }
         #endregion
@@ -397,45 +397,7 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _isEraserToolChecked, value);
-                if (IsEraserToolChecked && IsFullEraserChecked)
-                    InkCanvasEditingMode = EditingMode.EraseByStroke;
-                else if(IsEraserToolChecked && IsPartialEraserChecked)
-                    InkCanvasEditingMode = EditingMode.EraseByPoint;
-            }
-        }
-        #endregion
-
-        #region Is Partial Eraser Type Checked
-        private bool _isPartialEraserChecked = true;
-
-        /// <summary>
-        /// Is eraser partial stroke type checked.
-        /// </summary>
-        public bool IsPartialEraserChecked
-        {
-            get => _isPartialEraserChecked;
-            set
-            {
-                Set(ref _isPartialEraserChecked, value);
-                if (IsEraserToolChecked && IsPartialEraserChecked)
-                    InkCanvasEditingMode = EditingMode.EraseByPoint;
-            }
-        }
-        #endregion
-
-        #region Is Full Eraser Type Checked
-        private bool _isFullEraserChecked;
-
-        /// <summary>
-        /// Is eraser full stroke type checked.
-        /// </summary>
-        public bool IsFullEraserChecked
-        {
-            get => _isFullEraserChecked;
-            set
-            {
-                Set(ref _isFullEraserChecked, value);
-                if (IsEraserToolChecked && IsFullEraserChecked)
+                if (IsEraserToolChecked)
                     InkCanvasEditingMode = EditingMode.EraseByStroke;
             }
         }
@@ -700,7 +662,7 @@ namespace PicEdit.ViewModels
 
                 //bmp.Save(fileName, saveFormat);
 
-                SaveImage(fileName, saveFormat);
+                SaveImage(fileName, saveFormat, p);
             }
         }
         #endregion
@@ -712,7 +674,7 @@ namespace PicEdit.ViewModels
 
         private void OnSaveCommandExecuted(object p)
         {
-            SaveImage(_path, _format);
+            SaveImage(_path, _format, p);
         }
         #endregion
 
@@ -752,9 +714,9 @@ namespace PicEdit.ViewModels
         {
             if (position > 0 || strPos > 0)
             {
-                if (IsBrushToolChecked && obStrokeCollection.Count > 0 && strPos > 0)
+                if (IsBrushToolChecked && obStrokeCollection.Count > 1 && strPos > 0)
                     InkCanvasStrokes = new StrokeCollection(obStrokeCollection[--strPos]);
-                else if(!IsBrushToolChecked && position > 0)
+                else if (position > 0 && (!IsBrushToolChecked || (IsBrushToolChecked && obStrokeCollection.Count == 1)))
                     Image = obCollection[--position];
             }
         }
@@ -769,9 +731,9 @@ namespace PicEdit.ViewModels
         {
             if (position < obCollection.Count - 1 || strPos < obStrokeCollection.Count - 1)
             {
-                if (IsBrushToolChecked && obStrokeCollection.Count > 0 && strPos < obStrokeCollection.Count - 1)
+                if (IsBrushToolChecked && obStrokeCollection.Count > 1 && strPos < obStrokeCollection.Count - 1)
                     InkCanvasStrokes = new StrokeCollection(obStrokeCollection[++strPos]);
-                else if (!IsBrushToolChecked && position < obCollection.Count - 1)
+                else if ((position < obCollection.Count - 1) && (!IsBrushToolChecked || (IsBrushToolChecked && obStrokeCollection.Count == 1)))
                     Image = obCollection[++position];
             }
         }
@@ -786,12 +748,18 @@ namespace PicEdit.ViewModels
         {
             if (Image != null && obStrokeCollection.Count > 1)
             {
+                int count = obCollection.Count;
+                if (position != count - 1)
+                    for (int i = count - 1; i > position; i--)
+                        obCollection.RemoveAt(i);
+
                 InkCanvas ink = p as InkCanvas;
                 obCollection.Add(ConvertInkCanvasToBitmapSource(ink));
                 Image = obCollection[++position];
                 InkCanvasStrokes.Clear();
                 obStrokeCollection.Clear();
                 obStrokeCollection.Add(new StrokeCollection());
+                strPos = 0;
             }
             IsInkCanvasVisible = false;
         }
@@ -804,6 +772,11 @@ namespace PicEdit.ViewModels
 
         private void OnStrokeChangedCommandExecuted(object p)
         {
+            int count = obStrokeCollection.Count;
+            if (strPos != count - 1)
+                for (int i = count - 1; i > strPos; i--)
+                    obStrokeCollection.RemoveAt(i);
+
             obStrokeCollection.Add(new StrokeCollection(InkCanvasStrokes));
             ++strPos;
         }
@@ -845,7 +818,7 @@ namespace PicEdit.ViewModels
             return bmp;
         }
 
-        private void SaveImage(string path, ImageFormat format)
+        private void SaveImage(string path, ImageFormat format, object p = null)
         {
             if (imageStream != null)
             {
@@ -871,6 +844,20 @@ namespace PicEdit.ViewModels
                     obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
                     Image = obCollection[++position];
                     AngleValue = 0;
+                }
+                if(IsInkCanvasVisible && p is InkCanvas inkCanv && obStrokeCollection.Count > 1)
+                {
+                    int count = obCollection.Count;
+                    if (position != count - 1)
+                        for (int i = count - 1; i > position; i--)
+                            obCollection.RemoveAt(i);
+
+                    obCollection.Add(ConvertInkCanvasToBitmapSource(inkCanv));
+                    Image = obCollection[++position];
+                    InkCanvasStrokes.Clear();
+                    obStrokeCollection.Clear();
+                    obStrokeCollection.Add(new StrokeCollection());
+                    strPos = 0;
                 }
                 imageStream = StreamFromBitmapSource(Image);
                 var img = System.Drawing.Image.FromStream(imageStream);
@@ -929,27 +916,27 @@ namespace PicEdit.ViewModels
             return bitmap;
 
 
-            //creat bitmap with memory stream or file
+            //create bitmap with memory stream or file
             //Bitmap bitmap = new Bitmap(ms);
             //return ConvertBitmapToBitmapSource(bitmap);
         }
 
-        public static BitmapSource ConvertBitmapToBitmapSource(System.Drawing.Bitmap bitmap)
-        {
-            var bitmapData = bitmap.LockBits(
-                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+        //public static BitmapSource ConvertBitmapToBitmapSource(System.Drawing.Bitmap bitmap)
+        //{
+        //    var bitmapData = bitmap.LockBits(
+        //        new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+        //        System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
 
-            var bitmapSource = BitmapSource.Create(
-                bitmapData.Width, bitmapData.Height,
-                bitmap.HorizontalResolution, bitmap.VerticalResolution,
-                PixelFormats.Bgr24, null,
-                bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
+        //    var bitmapSource = BitmapSource.Create(
+        //        bitmapData.Width, bitmapData.Height,
+        //        bitmap.HorizontalResolution, bitmap.VerticalResolution,
+        //        PixelFormats.Bgr24, null,
+        //        bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
 
-            bitmap.UnlockBits(bitmapData);
+        //    bitmap.UnlockBits(bitmapData);
 
-            return bitmapSource;
-        }
+        //    return bitmapSource;
+        //}
 
         //static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
         //{
