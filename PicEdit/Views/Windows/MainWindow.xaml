@@ -24,6 +24,16 @@
         <vm:MainWindowViewModel/>
     </Window.DataContext>
 
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="Z"
+                    Command="{Binding UndoCommand}"/>
+        <KeyBinding Modifiers="Ctrl+Shift" Key="Z"
+                    Command="{Binding RedoCommand}"/>
+        <KeyBinding Modifiers="Ctrl" Key="S"
+                    Command="{Binding SaveCommand}"
+                    CommandParameter="{Binding ElementName=DrawCanvas}"/>
+    </Window.InputBindings>
+
     <!--<Window.Resources>
         <cmd:CloseApplicationCommand x:Key="CloseApplicationCommand"/>
     </Window.Resources>-->
@@ -807,7 +817,7 @@
                 <Separator/>
                 <MenuItem Header="Exit" Style="{DynamicResource MenuItemStyle1}" Command="{Binding CloseApplicationCommand}"/>
             </MenuItem>
-            <MenuItem Header="Help"  Style="{DynamicResource MenuItemStyle1}">
+            <MenuItem Header="Help" Style="{DynamicResource MenuItemStyle1}">
                 <MenuItem Header="About"  Style="{DynamicResource MenuItemStyle1}"/>
             </MenuItem>
         </Menu>
@@ -842,8 +852,8 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Grid.ColumnSpan="5" 
-                                Background="#FF424242"
-                                Orientation="Horizontal">
+                                    Background="#FF424242"
+                                    Orientation="Horizontal">
                             <Button Background="{x:Null}"
                                     BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
@@ -892,7 +902,7 @@
                                              Width="30" Height="30"
                                              Background="Transparent"
                                              BorderThickness="0"
-                                              IsChecked="{Binding IsScaleToolChecked, Mode=OneWayToSource}">
+                                             IsChecked="{Binding IsScaleToolChecked, Mode=OneWayToSource}">
                                     <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
@@ -904,6 +914,16 @@
                                              BorderThickness="0"
                                              IsChecked="{Binding IsRotationToolChecked, Mode=OneWayToSource}">
                                     <mat:IconImage Icon="Rotate_Right" Width="22" Foreground="DarkGray"/>
+                                </RadioButton>
+                                <Separator Background="#606060"/>
+
+                                <RadioButton x:Name="BrightnessTool" Style="{StaticResource {x:Type ToggleButton}}"
+                                             Margin="0, 1"
+                                             Width="30" Height="30"
+                                             Background="Transparent"
+                                             IsChecked="{Binding IsCropToolChecked, Mode=OneWayToSource}"
+                                             BorderThickness="0">
+                                    <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="BrushTool" Style="{StaticResource {x:Type ToggleButton}}"
@@ -921,22 +941,7 @@
                                     </beh:Interaction.Triggers>
 
                                 </RadioButton>
-                                <Separator Background="#606060"/>
-                                <RadioButton x:Name="CropTool" Style="{StaticResource {x:Type ToggleButton}}"
-                                             Margin="0, 1"
-                                             Width="38" Height="30"
-                                             Background="Transparent"
-                                             BorderThickness="0">
-                                    <Image Source="/Images/RGB.png" Height="14"/>
-                                </RadioButton>
-                                <Separator Background="#606060"/>
-                                <RadioButton x:Name="ColorTool" Style="{StaticResource {x:Type ToggleButton}}"
-                                             Margin="0, 1"
-                                             Width="30" Height="30"
-                                             Background="Transparent"
-                                             BorderThickness="0">
-                                    <phosfill:IconImage Icon="CircleHalf" Width="22" Foreground="DarkGray"/>
-                                </RadioButton>
+
                             </ToolBar>
                         </ToolBarTray>
 
@@ -945,7 +950,7 @@
                                       VerticalScrollBarVisibility="Auto">
                             <!--IsHitTestVisible="{Binding ElementName=CursorTool, Path=IsChecked}"-->
                             <ScrollViewer.InputBindings>
-                                <MouseBinding  Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
+                                <MouseBinding Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
                                 <MouseBinding Gesture="{ext:MouseWheel Direction=Down, Keys=Control}" Command="{Binding ZoomOutImageCommand}"/>
                             </ScrollViewer.InputBindings>
                             <!--<Viewbox>-->
@@ -960,16 +965,16 @@
                                 </Grid>-->
 
                             <Canvas x:Name="Canvas"
-                                         Width="{Binding ElementName=MainImg, Path=ActualWidth}"
-                                        Height="{Binding ElementName=MainImg, Path=ActualHeight}"
-                                        Background="White">
+                                    Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                                    Height="{Binding ElementName=MainImg, Path=ActualHeight}"
+                                    Background="White">
                                 <Canvas.LayoutTransform>
                                     <ScaleTransform 
                                                 ScaleX="{Binding ZoomValue}" 
                                                 ScaleY="{Binding ZoomValue}"/>
                                 </Canvas.LayoutTransform>
 
-                                <Image  x:Name="MainImg" Source="{Binding Image}"
+                                <Image x:Name="MainImg" Source="{Binding Image}"
                                         RenderTransformOrigin="0.5, 0.5">
                                     <Image.LayoutTransform>
                                         <ScaleTransform
@@ -983,12 +988,12 @@
                                 </Image>
 
                                 <InkCanvas x:Name="DrawCanvas"
-                                        Width="{Binding ElementName=MainImg, Path=ActualWidth}"
-                                        Height="{Binding ElementName=MainImg, Path=ActualHeight}"
-                                        Visibility="{Binding IsInkCanvasVisible, Converter={StaticResource BoolToVis}}"
-                                        EditingMode="{Binding InkCanvasEditingMode}"
-                                        DefaultDrawingAttributes="{Binding InkCanvasDefaultDrawingAttributes}"
-                                        Strokes="{Binding InkCanvasStrokes}">
+                                           Width="{Binding ElementName=MainImg, Path=ActualWidth}"
+                                           Height="{Binding ElementName=MainImg, Path=ActualHeight}"
+                                           Visibility="{Binding IsInkCanvasVisible, Converter={StaticResource BoolToVis}}"
+                                           EditingMode="{Binding InkCanvasEditingMode}"
+                                           DefaultDrawingAttributes="{Binding InkCanvasDefaultDrawingAttributes}"
+                                           Strokes="{Binding InkCanvasStrokes}">
 
                                     <InkCanvas.Background>
                                         <ImageBrush ImageSource="{Binding Image}"></ImageBrush>
@@ -1010,10 +1015,10 @@
                         </ScrollViewer>
 
                         <GridSplitter  Grid.Row="1" Grid.Column="2"
-                                          ShowsPreview="False" 
-                                          Width="3"
-                                          HorizontalAlignment="Center"
-                                          Background="{DynamicResource DarkGrey}"/>
+                                       ShowsPreview="False" 
+                                       Width="3"
+                                       HorizontalAlignment="Center"
+                                       Background="{DynamicResource DarkGrey}"/>
 
                         <Grid Grid.Row="1" Grid.Column="3"
                               Background="{DynamicResource Grey}">
@@ -1042,35 +1047,33 @@
                                            FontSize="16"/>
 
                                 <Slider Grid.Row="2" Grid.Column="1"
-                                    Minimum="1"
-                                    Maximum="100"
-                                    Height="20"
-                                    MaxWidth="350"
-                                    Margin="8, 0, 8, 4"
-                                    IsSelectionRangeEnabled="True"
-                                    Value="{Binding SliderXValue}"
-                                    IsEnabled="{Binding IsScaleEnabled}"
-                                    Visibility="Visible"/>
+                                        Minimum="1"
+                                        Maximum="100"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 0, 8, 4"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding SliderXValue}"
+                                        IsEnabled="{Binding IsScaleEnabled}"/>
 
                                 <Slider Grid.Row="4" Grid.Column="1"
-                                    Minimum="1"
-                                    Maximum="100"
-                                    Height="20"
-                                    MaxWidth="350"
-                                    Margin="8, 4, 8, 0"
-                                    IsSelectionRangeEnabled="True"
-                                    Value="{Binding SliderYValue}"
-                                    IsEnabled="{Binding IsScaleEnabled}"
-                                    Visibility="Visible"/>
+                                        Minimum="1"
+                                        Maximum="100"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 4, 8, 0"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding SliderYValue}"
+                                        IsEnabled="{Binding IsScaleEnabled}"/>
 
                                 <ToggleButton IsChecked="{Binding IsScaleChecked}"
-                                          Grid.Row="3"                                            
-                                          Grid.Column="1"
-                                          IsEnabled="{Binding IsScaleEnabled}"
-                                          Width="25"
-                                          Height="20"
-                                          Background="Transparent"
-                                          BorderThickness="0">
+                                              Grid.Row="3"                                            
+                                              Grid.Column="1"
+                                              IsEnabled="{Binding IsScaleEnabled}"
+                                              Width="25"
+                                              Height="20"
+                                              Background="Transparent"
+                                              BorderThickness="0">
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
@@ -1084,14 +1087,14 @@
                                 </ToggleButton>
 
                                 <TextBlock Grid.Row="2"
-                                       Grid.Column="0"
+                                           Grid.Column="0"
                                            Text="W:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
                                            Foreground="{DynamicResource DarkGray}"/>
 
                                 <TextBlock Grid.Row="4"
-                                       Grid.Column="0"
+                                           Grid.Column="0"
                                            Text="H:"
                                            HorizontalAlignment="Center"
                                            FontSize="13"
@@ -1099,7 +1102,7 @@
                             </Grid>
 
                             <Grid Grid.Row="0"
-                                      Visibility="{Binding IsRotationEnabled, Converter={StaticResource BoolToVis}}">
+                                  Visibility="{Binding IsRotationEnabled, Converter={StaticResource BoolToVis}}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="2*"/>
                                         <RowDefinition Height="0.6*"/>
@@ -1114,32 +1117,31 @@
 
 
                                     <TextBlock Text="Rotation"
-                                           Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                                   
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Top"
-                                           Foreground="{DynamicResource DarkGray}"
-                                           FontSize="16"/>
+                                               Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                                   
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Top"
+                                               Foreground="{DynamicResource DarkGray}"
+                                               FontSize="16"/>
 
                                     <Slider Grid.Row="2" Grid.Column="1"
-                                        x:Name="RotationSlider"
-                                    Minimum="0"
-                                    Maximum="360"
-                                    IsSnapToTickEnabled="True"
-                                    Ticks="0, 90, 180, 270, 360"
-                                    Height="20"
-                                    MaxWidth="350"
-                                    Margin="8, 0, 8, 4"
-                                    IsSelectionRangeEnabled="True"
-                                    Value="{Binding AngleValue}"
-                                    IsEnabled="{Binding IsRotationEnabled}"
-                                    Visibility="Visible"/>
+                                            x:Name="RotationSlider"
+                                            Minimum="0"
+                                            Maximum="360"
+                                            IsSnapToTickEnabled="True"
+                                            Ticks="0, 90, 180, 270, 360"
+                                            Height="20"
+                                            MaxWidth="350"
+                                            Margin="8, 0, 8, 4"
+                                            IsSelectionRangeEnabled="True"
+                                            Value="{Binding AngleValue}"
+                                            IsEnabled="{Binding IsRotationEnabled}"/>
 
                                     <TextBlock Grid.Row="2"
-                                       Grid.Column="0"
-                                           Text="{Binding ElementName=RotationSlider, Path=Value}"
-                                           HorizontalAlignment="Center"
-                                           FontSize="13"
-                                           Foreground="{DynamicResource DarkGray}"/>
+                                               Grid.Column="0"
+                                               Text="{Binding ElementName=RotationSlider, Path=Value}"
+                                               HorizontalAlignment="Center"
+                                               FontSize="13"
+                                               Foreground="{DynamicResource DarkGray}"/>
                                 </Grid>
 
 
@@ -1214,20 +1216,19 @@
                                 
                                 <Slider Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5"
                                         x:Name="PenThicknessSLider"
-                                    Minimum="1"
-                                    Maximum="20"
-                                    IsSnapToTickEnabled="True"
-                                    TickFrequency="1"
-                                    Height="20"
-                                    MaxWidth="350"
-                                    Margin="26, 1, 8, 4"
-                                    IsSelectionRangeEnabled="True"
-                                    Value="{Binding ThicknessValue}"
-                                    IsEnabled="{Binding IsPaintEnabled}"
-                                    Visibility="Visible"/>
+                                        Minimum="1"
+                                        Maximum="20"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="26, 1, 8, 4"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding ThicknessValue}"
+                                        IsEnabled="{Binding IsPaintEnabled}"/>
 
                                 <TextBlock Grid.Row="4"
-                                       Grid.Column="0"
+                                           Grid.Column="0"
                                            Text="{Binding ElementName=PenThicknessSLider, Path=Value}"
                                            HorizontalAlignment="Left"
                                            VerticalAlignment="Top"
@@ -1246,6 +1247,112 @@
                                                   Height="25"
                                                   Margin="10, 0"
                                                   SelectedColor="{Binding ColorPickerSelectedColor}"/>
+
+                            </Grid>
+
+                            <Grid Grid.Row="0"
+                                     Visibility="{Binding IsCropEnabled, Converter={StaticResource BoolToVis}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1.5*"/>
+                                    <RowDefinition Height="1.2*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="0.7*"/>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="Cropping"
+                                           Grid.Row="1"                                
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Top"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="16"/>
+                                
+                                <TextBlock Text="Top"
+                                           Grid.Row="2"                                
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="3"
+                                        x:Name="TopCropSlider"
+                                        Minimum="0"
+                                        Maximum="100"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 0, 8, 0"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding TopCropValue}"
+                                        IsEnabled="{Binding IsCropEnabled}"/>
+
+                                <TextBlock Text="Bottom"
+                                           Grid.Row="4"                                
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="5"
+                                        x:Name="BottomCropSlider"
+                                        Minimum="0"
+                                        Maximum="100"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 0, 8, 0"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding BottomCropValue}"
+                                        IsEnabled="{Binding IsCropEnabled}"/>
+
+
+                                <TextBlock Text="Right"
+                                           Grid.Row="6"                                
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="7"
+                                        x:Name="RightCropSlider"
+                                        Minimum="0"
+                                        Maximum="100"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 0, 8, 0"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding RightCropValue}"
+                                        IsEnabled="{Binding IsCropEnabled}"/>
+
+                                <TextBlock Text="Left"
+                                           Grid.Row="8"                                   
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DarkGray}"
+                                           FontSize="13"/>
+
+                                <Slider Grid.Row="9" 
+                                        x:Name="ContrastSlider"
+                                        Minimum="0"
+                                        Maximum="100"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="1"
+                                        Height="20"
+                                        MaxWidth="350"
+                                        Margin="8, 0, 8, 0"
+                                        IsSelectionRangeEnabled="True"
+                                        Value="{Binding LeftCropValue}"
+                                        IsEnabled="{Binding IsCropEnabled}"/>
 
                             </Grid>
 
