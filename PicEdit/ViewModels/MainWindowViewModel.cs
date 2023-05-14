@@ -7,28 +7,24 @@ using EditingMode = System.Windows.Controls.InkCanvasEditingMode;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Drawing.Imaging;
-using System.Drawing;
 using System.IO;
 using System.Windows.Media;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Ink;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using static System.Net.Mime.MediaTypeNames;
-using System.Xml.Linq;
-using System.Collections;
-using System.Windows.Media.Media3D;
-using System.Diagnostics.Contracts;
-using System.Diagnostics;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Application = System.Windows.Application;
 using PicEdit.Services;
 
 namespace PicEdit.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        IWindowService _windowService;
+        Stream? imageStream;
+        ObservableCollection<BitmapSource> obCollection;
+        int position = -1;
+        ObservableCollection<StrokeCollection> obStrokeCollection;
+        int strPos = -1;
+
         #region Window title
         private string _title = "PicEdit";
 
@@ -38,25 +34,9 @@ namespace PicEdit.ViewModels
         public string Title
         {
             get => _title;
-            //set
-            //{
-            //	if (Equals(_title, value)) return;
-            //	_title = value;
-            //	OnPropertyChanged();
-
-            //	Set(ref _title, value);
-            //}
             set => Set(ref _title, value);
         }
         #endregion
-
-        private IWindowService _windowService;
-
-        Stream? imageStream;
-        ObservableCollection<BitmapSource> obCollection;
-        int position = -1;
-        ObservableCollection<StrokeCollection> obStrokeCollection;
-        int strPos = -1;
 
         #region MainImage
         private BitmapSource? _image;
@@ -175,7 +155,6 @@ namespace PicEdit.ViewModels
                     SliderXValue = 100;
                     SliderYValue = 100;
                 }
-
             }
         }
         #endregion
@@ -571,7 +550,6 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _rightCropValue, value);
-                //Image = CropImage(LeftCropValue, 0, 0, 0);
                 Image = CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue);
             }
         }
@@ -589,7 +567,6 @@ namespace PicEdit.ViewModels
             set
             {
                 Set(ref _leftCropValue, value);
-                //Image = CropImage(LeftCropValue, 0, 0, 0);
                 Image = CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue);
             }
         }
@@ -736,19 +713,6 @@ namespace PicEdit.ViewModels
                 string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
                 _saveFormat = _saveFormat == chosenFormat ? _saveFormat : chosenFormat;
                 ImageFormat saveFormat = ToImageFormat(_saveFormat);
-                //Bitmap bmp;
-                //using (MemoryStream outStream = new MemoryStream())
-                //{
-                //    BitmapEncoder enc = new BmpBitmapEncoder();
-                //    enc.Frames.Add(BitmapFrame.Create(Image));
-                //    enc.Save(outStream);
-                //    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                //    bmp = new Bitmap(bitmap);
-                //}
-
-                //bmp.Save(fileName, saveFormat);
-                //System.Windows.MessageBox.Show("Image saved successfully", "Image saved", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 SaveImage(fileName, saveFormat, p);
             }
         }
@@ -777,18 +741,6 @@ namespace PicEdit.ViewModels
                 string fileName = save.FileName;
                 string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
                 ImageFormat saveFormat = ToImageFormat(chosenFormat);
-                //Bitmap bmp;
-                //using (MemoryStream outStream = new MemoryStream())
-                //{
-                //    BitmapEncoder enc = new BmpBitmapEncoder();
-                //    enc.Frames.Add(BitmapFrame.Create(Image));
-                //    enc.Save(outStream);
-                //    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                //    bmp = new Bitmap(bitmap);
-                //}
-
-                //bmp.Save(fileName, saveFormat);
-
                 SaveImage(fileName, saveFormat, p);
             }
         }
@@ -1018,36 +970,6 @@ namespace PicEdit.ViewModels
 
         private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas? drawCanvas)
         {
-            //string newImagePath = "./strokes.png";
-            //InkCanvas inkCanvas = drawCanvas;
-            //ImageBrush imageBrush = new ImageBrush();
-            //imageBrush.ImageSource = obCollection[obCollection.Count - 1];
-            //drawCanvas.Background = imageBrush;
-
-            //using (FileStream fs = new FileStream(newImagePath, FileMode.Create))
-            //{
-            //    var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
-            //    rtb.Render(drawCanvas);
-            //    PngBitmapEncoder encoder = new PngBitmapEncoder();
-            //    encoder.Frames.Add(BitmapFrame.Create(rtb));
-            //    encoder.Save(fs);
-            //}
-            //return new BitmapImage();
-            //creating temporary InkCanvas
-            //InkCanvas inkCanvas = drawCanvas;
-            //ImageBrush imageBrush = new ImageBrush();
-            //imageBrush.ImageSource = obCollection[obCollection.Count - 1];
-            //drawCanvas.Background = imageBrush;
-            //inkCanvas.Width = Image.Width;
-            //inkCanvas.Height = Image.Height;
-
-            //render bitmap
-            //RenderTargetBitmap rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96, 96, PixelFormats.Default);
-            //rtb.Render(drawCanvas);
-            //PngBitmapEncoder encoder = new PngBitmapEncoder();
-            //encoder.Frames.Add(BitmapFrame.Create(rtb));
-            //rtb.Render(drawCanvas);
-
             if(drawCanvas != null)
             {
                 var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
@@ -1069,10 +991,6 @@ namespace PicEdit.ViewModels
             }
             else
                 return new BitmapImage();
-
-            //create bitmap with memory stream or file
-            //Bitmap bitmap = new Bitmap(ms);
-            //return ConvertBitmapToBitmapSource(bitmap);
         }
 
         public static byte[]? ConvertWriteableBitmapToByteArray(WriteableBitmap wb)
@@ -1082,9 +1000,7 @@ namespace PicEdit.ViewModels
 
             int stride = wb.PixelWidth * wb.Format.BitsPerPixel / 8;
             int size = stride * wb.PixelHeight;
-
             byte[] buffer = new byte[size];
-
             wb.CopyPixels(buffer, stride, 0);
 
             return buffer;
@@ -1099,183 +1015,18 @@ namespace PicEdit.ViewModels
             return new CroppedBitmap(obCollection[position], new Int32Rect(left, top, obCollection[position].PixelWidth - left - right, obCollection[position].PixelHeight - bottom - top));
         }
 
-        //private BitmapImage ConvertWriteableBitmapToBitmapImage(WriteableBitmap wbm)
-        //{
-        //    BitmapImage bmImage = new BitmapImage();
-        //    using (MemoryStream stream = new MemoryStream())
-        //    {
-        //        PngBitmapEncoder encoder = new PngBitmapEncoder();
-        //        encoder.Frames.Add(BitmapFrame.Create(wbm));
-        //        encoder.Save(stream);
-        //        bmImage.BeginInit();
-        //        bmImage.CacheOption = BitmapCacheOption.OnLoad;
-        //        bmImage.StreamSource = stream;
-        //        bmImage.EndInit();
-        //        bmImage.Freeze();
-        //    }
-        //    return bmImage;
-        //}
-
-        //private byte[] ConvertBitmapSourceToByteArray(BitmapSource bitmapSource)
-        //{
-        //    int width = bitmapSource.PixelWidth;
-        //    int height = bitmapSource.PixelHeight;
-        //    int stride = width * ((bitmapSource.Format.BitsPerPixel + 7) / 8);
-
-        //    byte[] bitmapData = new byte[height * stride];
-
-        //    bitmapSource.CopyPixels(bitmapData, stride, 0);
-        //    return bitmapData;
-        //}
-
-        //private WriteableBitmap ChangeBrightness(WriteableBitmap source, byte change_value)
-        //{
-        //    WriteableBitmap dest = new WriteableBitmap(source);
-
-        //    byte[] color = new byte[4];
-
-        //    using (Stream s = new MemoryStream(ConvertWriteableBitmapToByteArray(source)))
-        //    {
-        //        using (Stream d = new MemoryStream(ConvertWriteableBitmapToByteArray(dest)))
-        //        {
-        //            // read the pixel color
-        //            while (s.Read(color, 0, 4) > 0)
-        //            {
-        //                // color[0] = b
-        //                // color[1] = g 
-        //                // color[2] = r
-        //                // color[3] = a
-
-        //                // do the adding algo per byte (skip the alpha)
-        //                for (int i = 0; i < 4; i++)
-        //                {
-        //                    if (color[i] + change_value > 255) color[i] = 255; else color[i] = (byte)(color[i] + change_value);
-        //                }
-
-        //                // write the new pixel color
-        //                d.Write(color, 0, 4);
-        //            }
-        //        }
-        //    }
-        //    //using (FileStream stream = new FileStream("./test.png", FileMode.Create))
-        //    //{
-        //    //    PngBitmapEncoder encoder = new PngBitmapEncoder();
-        //    //    encoder.Frames.Add(BitmapFrame.Create(dest.Clone()));
-        //    //    encoder.Save(stream);
-        //    //}
-        //    // return the new bitmap
-        //    return dest;
-        //}
-
-        //public Bitmap AdjustBrightnessContrast(System.Drawing.Image image, int contrastValue, int brightnessValue)
-        //{
-        //    float brightness = -(brightnessValue / 100.0f);
-        //    float contrast = contrastValue / 100.0f;
-        //    var bitmap = new Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-        //    using (var g = Graphics.FromImage(bitmap))
-        //        using (var attributes = new ImageAttributes())
-        //        {
-        //            float[][] matrix = {
-        //                new float[] { contrast, 0, 0, 0, 0},
-        //                new float[] {0, contrast, 0, 0, 0},
-        //                new float[] {0, 0, contrast, 0, 0},
-        //                new float[] {0, 0, 0, 1, 0},
-        //                new float[] {brightness, brightness, brightness, 1, 1}
-        //        };
-
-        //        ColorMatrix colorMatrix = new ColorMatrix(matrix);
-        //        attributes.SetColorMatrix(colorMatrix);
-        //        g.DrawImage(image, new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-        //            0, 0, bitmap.Width, bitmap.Height, GraphicsUnit.Pixel, attributes);
-        //        return bitmap;
-        //    }
-        //}
-
-        //private System.Drawing.Bitmap BitmapFromSource(BitmapSource bitmapsource)
-        //{
-        //    System.Drawing.Bitmap bitmap;
-        //    using (MemoryStream outStream = new MemoryStream())
-        //    {
-        //        PngBitmapEncoder enc = new PngBitmapEncoder();
-        //        enc.Frames.Add(BitmapFrame.Create(bitmapsource));
-        //        enc.Save(outStream);
-        //        bitmap = new System.Drawing.Bitmap(outStream);
-        //    }
-        //    return bitmap;
-        //}
-
-        //private static BitmapImage BitmapToSource(Bitmap src)
-        //{
-        //    System.IO.MemoryStream ms = new System.IO.MemoryStream();
-        //    src.Save(ms, ImageFormat.Jpeg);
-
-        //    BitmapImage image = new BitmapImage();
-        //    image.BeginInit();
-        //    ms.Seek(0, System.IO.SeekOrigin.Begin);
-        //    image.StreamSource = ms;
-        //    image.EndInit();
-        //    return image;
-        //}
-
-        //private static BitmapSource ConvertBitmapToBitmapSource(System.Drawing.Bitmap bitmap)
-        //{
-        //    //var bitmapData = bitmap.LockBits(
-        //    //    new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-        //    //    System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
-
-        //    //var bitmapSource = BitmapSource.Create(
-        //    //    bitmapData.Width, bitmapData.Height,
-        //    //    bitmap.HorizontalResolution, bitmap.VerticalResolution,
-        //    //    PixelFormats.Bgr24, null,
-        //    //    bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
-
-        //    //bitmap.UnlockBits(bitmapData);
-
-        //    //return bitmapSource;
-
-        //    return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-        //      bitmap.GetHbitmap(),
-        //      IntPtr.Zero,
-        //      Int32Rect.Empty,
-        //      BitmapSizeOptions.FromEmptyOptions());
-        //}
-
-
-
-        //static byte[] GetBytesFromBitmapSource(BitmapSource bmp)
-        //{
-        //    int width = bmp.PixelWidth;
-        //    int height = bmp.PixelHeight;
-        //    int stride = width * ((bmp.Format.BitsPerPixel + 7) / 8);
-
-        //    byte[] pixels = new byte[height * stride];
-
-        //    bmp.CopyPixels(pixels, stride, 0);
-
-        //    return pixels;
-        //}
-
         #endregion
 
         public MainWindowViewModel(IWindowService windowService)
         {
-
             _windowService = windowService;
-
             obCollection = new ObservableCollection<BitmapSource>();
+            _inkCanvasStrokes = new StrokeCollection();
             obStrokeCollection = new ObservableCollection<StrokeCollection>
             {
                 new StrokeCollection()
             };
             strPos = 0;
-            _inkCanvasStrokes = new StrokeCollection();
-
-            //(_inkCanvasStrokes as INotifyCollectionChanged).CollectionChanged += delegate
-            //{
-            //    obCollection.Add(ConvertInkCanvasToBitmapSource());
-            //    Image = obCollection[++position];
-            //};
 
             #region Commands
 

@@ -4,25 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        xmlns:fa5="http://schemas.fontawesome.com/icons/"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:phos="clr-namespace:PicEdit.Fonts.RegularPhosphor"
         xmlns:phosfill="clr-namespace:PicEdit.Fonts.FillPhosphor"
         xmlns:mat="clr-namespace:PicEdit.Fonts.RegularMaterial"
         xmlns:matround="clr-namespace:PicEdit.Fonts.RegularMaterialRound"
-        xmlns:vm="clr-namespace:PicEdit.ViewModels"
         xmlns:ext="clr-namespace:PicEdit.Extensions"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:beh="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:cmd="clr-namespace:PicEdit.Infrastructure.Commands"
-        xmlns:local="clr-namespace:PicEdit"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
         Title="{Binding Title}"
         Height="450" Width="820">
-    <!--<Window.DataContext>
-        <vm:MainWindowViewModel/>
-    </Window.DataContext>-->
 
     <Window.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="Z"
@@ -33,10 +24,6 @@
                     Command="{Binding SaveCommand}"
                     CommandParameter="{Binding ElementName=DrawCanvas}"/>
     </Window.InputBindings>
-
-    <!--<Window.Resources>
-        <cmd:CloseApplicationCommand x:Key="CloseApplicationCommand"/>
-    </Window.Resources>-->
 
     <Window.Resources>
 
@@ -850,55 +837,6 @@
 
         <!--#endregion-->
 
-        <!--<Color x:Key="BorderMediumColor">#FF888888</Color>
-
-        <Style TargetType="{x:Type ScrollViewer}">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Border Grid.ColumnSpan="2" Grid.RowSpan="2"
-                  BorderThickness="0,1,1,1">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                </Border.BorderBrush>
-                                <ScrollContentPresenter CanContentScroll="{TemplateBinding CanContentScroll}" />
-                            </Border>
-                            <ScrollBar x:Name="PART_VerticalScrollBar"
-                     Grid.Column="1"                         
-                     Background="Transparent"
-                     Value="{TemplateBinding VerticalOffset}"
-                     Maximum="{TemplateBinding ScrollableHeight}"
-                     ViewportSize="{TemplateBinding ViewportHeight}"
-                     Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
-                            <ScrollBar x:Name="PART_HorizontalScrollBar"
-                     Grid.Row="1" 
-                     Background="Transparent"
-                     Orientation="Horizontal"
-                     Value="{TemplateBinding HorizontalOffset}"
-                     Maximum="{TemplateBinding ScrollableWidth}"
-                     ViewportSize="{TemplateBinding ViewportWidth}"
-                     Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
-
-                            <Rectangle x:Name="Corner"
-                     Grid.Column="1" Grid.Row="1"
-                     Fill="Transparent" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
     </Window.Resources>
 
     <Grid Background="{DynamicResource Greyish}">
@@ -914,12 +852,6 @@
               BorderThickness="0"
               FontFamily="{StaticResource MontserratRegular}">
             <MenuItem Header="File" Style="{DynamicResource MenuItemStyle1}">
-                <!--<MenuItem Header="Exit" Command="{StaticResource CloseApplicationCommand}"/>-->
-                <!--<MenuItem Header="Exit">
-                    <MenuItem.Command>
-                        <cmd:CloseAppilcationCommand/>
-                    </MenuItem.Command>
-                </MenuItem>-->
                 <MenuItem Header="Open"
                           Style="{DynamicResource MenuItemStyle1}"
                           Command="{Binding OpenImageCommand}"/>
@@ -1070,21 +1002,10 @@
                         <ScrollViewer Grid.Row="1" Grid.Column="1"
                                       HorizontalScrollBarVisibility="Auto"
                                       VerticalScrollBarVisibility="Auto">
-                            <!--IsHitTestVisible="{Binding ElementName=CursorTool, Path=IsChecked}"-->
                             <ScrollViewer.InputBindings>
                                 <MouseBinding Gesture="{ext:MouseWheel Direction=Up, Keys=Control}" Command="{Binding ZoomInImageCommand}"/>
                                 <MouseBinding Gesture="{ext:MouseWheel Direction=Down, Keys=Control}" Command="{Binding ZoomOutImageCommand}"/>
                             </ScrollViewer.InputBindings>
-                            <!--<Viewbox>-->
-                            <!--<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Image  x:Name="MainImg" Source="{Binding Image}">
-                                        <Image.LayoutTransform>
-                                            <ScaleTransform
-                                                ScaleX="{Binding ZoomValue}" 
-                                                ScaleY="{Binding ZoomValue}"/>
-                                        </Image.LayoutTransform>
-                                    </Image>
-                                </Grid>-->
 
                             <Canvas x:Name="Canvas"
                                     Width="{Binding ElementName=MainImg, Path=ActualWidth}"
@@ -1131,9 +1052,8 @@
                                     </beh:Interaction.Triggers>
 
                                 </InkCanvas>
-                                
+
                             </Canvas>
-                            <!--</Viewbox>-->
                         </ScrollViewer>
 
                         <GridSplitter  Grid.Row="1" Grid.Column="2"
@@ -1198,7 +1118,7 @@
                                               Width="30"
                                               Height="25"
                                               BorderThickness="0">
-                                    
+
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
@@ -1235,7 +1155,7 @@
 
                                         </Style>
                                     </ToggleButton.Style>
-                                    
+
                                 </ToggleButton>
 
                                 <TextBlock Grid.Row="2"
@@ -1259,20 +1179,20 @@
 
                             <Grid Grid.Row="0"
                                   Visibility="{Binding IsRotationEnabled, Converter={StaticResource BoolToVis}}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="2*"/>
-                                        <RowDefinition Height="0.6*"/>
-                                        <RowDefinition Height="0.5*"/>
-                                        <RowDefinition Height="2*"/>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="2*"/>
+                                    <RowDefinition Height="0.6*"/>
+                                    <RowDefinition Height="0.5*"/>
+                                    <RowDefinition Height="2*"/>
                                 </Grid.RowDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="30"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
 
-                                    <TextBlock Text="Rotation"
+                                <TextBlock Text="Rotation"
                                                Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"                                   
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Top"
@@ -1280,7 +1200,7 @@
                                                FontFamily="{StaticResource MontserratMedium}"
                                                FontSize="16"/>
 
-                                    <Slider Grid.Row="2" Grid.Column="1"
+                                <Slider Grid.Row="2" Grid.Column="1"
                                             x:Name="RotationSlider"
                                             Minimum="0"
                                             Maximum="360"
@@ -1294,7 +1214,7 @@
                                             Style="{StaticResource SliderStyle}"
                                             IsEnabled="{Binding IsRotationEnabled}"/>
 
-                                    <TextBlock Grid.Row="2"
+                                <TextBlock Grid.Row="2"
                                                Grid.Column="0"
                                                Text="{Binding ElementName=RotationSlider, Path=Value}"
                                                HorizontalAlignment="Center"
@@ -1302,7 +1222,7 @@
                                                FontSize="14"
                                                FontFamily="{StaticResource MontserratMedium}"
                                                Foreground="{DynamicResource DarkGray}"/>
-                                </Grid>
+                            </Grid>
 
 
                             <Grid Grid.Row="0"
@@ -1372,7 +1292,7 @@
                                            Foreground="{DynamicResource DarkGray}"
                                            FontFamily="{StaticResource MontserratMedium}"
                                            FontSize="14"/>
-                                
+
                                 <Slider Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5"
                                         x:Name="PenThicknessSLider"
                                         Minimum="1"
@@ -1435,7 +1355,7 @@
                                            Foreground="{DynamicResource DarkGray}"
                                            FontFamily="{StaticResource MontserratMedium}"
                                            FontSize="16"/>
-                                
+
                                 <TextBlock Text="Top"
                                            Grid.Row="2"                                
                                            HorizontalAlignment="Center"
@@ -1529,7 +1449,6 @@
 
                         </Grid>
 
-                        <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
                                Grid.ColumnSpan="5"
                                Background="{DynamicResource Grey}">
@@ -1582,17 +1501,6 @@
 
                         <Grid Grid.Row="0" Grid.ColumnSpan="3" 
                                     Background="#FF424242">
-
-                            <!--<Button Background="{DynamicResource Gray}"
-                                    Foreground="{DynamicResource DarkGrey}"
-                                    BorderBrush="{x:Null}" 
-                                    Height="20" 
-                                    Width="70"
-                                    IsEnabled="{Binding IsSaveEnabled}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    Content="Save"
-                                Command="{Binding ConvertImageCommand}"/>-->
                         </Grid>
 
 
@@ -1685,7 +1593,6 @@
                             </Canvas>
                         </ScrollViewer>
 
-                        <!--#4B4952-->
                         <StatusBar Grid.Row="2" 
                                    Grid.Column ="0"
                                    Grid.ColumnSpan="3"
@@ -1742,68 +1649,15 @@
                                             </Setter>
                                         </Style>
                                     </Button.Style>
+                                    
                                 </Button>
                             </StatusBarItem>
                         </StatusBar>
-
+                        
                     </Grid>
                 </DockPanel>
-
             </TabItem>
         </TabControl>
-
-        <!--<StackPanel Grid.Row="1" Grid.ColumnSpan="3" 
-                   Background="#FF424242"
-                    Orientation="Horizontal">
-            <Button Background="{x:Null}" BorderBrush="{x:Null}" Width="100" Height="40">
-                <StackPanel Orientation="Horizontal">
-                    <phos:IconImage Icon="Pencil" Height="20" Foreground="DarkGray"/>
-                    <TextBlock Text="Editing" Foreground="DarkGray"  Margin="5, 0"/>
-                </StackPanel>
-            </Button>
-            <Button Background="{x:Null}" BorderBrush="{x:Null}" Width="100" Height="40">
-                <StackPanel Orientation="Horizontal">
-                    <phosfill:IconImage Icon="ArrowsCounterClockwise" Height="20" Foreground="DarkGray"/>
-                    <TextBlock Text="Converting" Foreground="DarkGray" Margin="5, 0"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>-->
-
-
-
-        <!--<StackPanel Grid.Row="3" Grid.Column="0" Background="#FF424242">
-            <Button Margin="0, 2">
-                <phosfill:IconImage Icon="Cursor" Width="18" Foreground="DarkGray" />
-            </Button>
-            <Button Margin="0, 2">
-                <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
-            </Button>
-            <Button Margin="0, 2">
-                <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
-            </Button>
-            <Button Margin="0, 2">
-                <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
-            </Button>
-            <Button Margin="0, 2">
-                <phosfill:IconImage Icon="CircleHalf" Width="22" Foreground="DarkGray"/>
-            </Button>
-            <Button Margin="0, 2">
-                <phos:IconImage Icon="TextT" Width="22" Foreground="DarkGray"/>
-            </Button>
-        </StackPanel>-->
-
-        <!--<StatusBar Grid.Row="4" 
-                   Grid.ColumnSpan="3"
-                   Background="#4B4952">
-            <StatusBarItem>
-                <TextBlock Foreground="LightGray" Text="1234"/>
-            </StatusBarItem>
-            <StatusBarItem>
-                <ProgressBar BorderThickness="0" Foreground="White" Background="Gray" Height="14" Width="120" Value="30"/>
-            </StatusBarItem>
-        </StatusBar>-->
-
-
-
+        
     </Grid>
 </Window>
