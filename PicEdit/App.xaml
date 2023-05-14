@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:PicEdit"
              StartupUri="Views\Windows\MainWindow.xaml">
     <Application.Resources>
-         
+
     </Application.Resources>
 </Application>

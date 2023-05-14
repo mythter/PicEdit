@@ -12,6 +12,8 @@
     <None Remove="Fonts\DuotonePhosphor.ttf" />
     <None Remove="Fonts\FillPhosphor.ttf" />
     <None Remove="Fonts\LightPhosphor.ttf" />
+    <None Remove="Fonts\Montserrat-Medium.ttf" />
+    <None Remove="Fonts\Montserrat-Regular.ttf" />
     <None Remove="Fonts\RegularMaterial.ttf" />
     <None Remove="Fonts\RegularMaterialIconsRound.otf" />
     <None Remove="Fonts\RegularMaterialOutlined.otf" />
@@ -41,7 +43,6 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Data\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +56,12 @@
 
   <ItemGroup>
     <Resource Include="Fonts\FillPhosphor.ttf" />
+    <Resource Include="Fonts\Montserrat-Medium.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Montserrat-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Fonts\RegularMaterial.ttf" />
     <Resource Include="Fonts\RegularMaterialIconsRound.otf" />
     <Resource Include="Fonts\RegularPhosphor.ttf" />

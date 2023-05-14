@@ -54,7 +54,7 @@ namespace PicEdit.Extensions
         public static bool GetShiftWheelScrollsHorizontally(UIElement element) => (bool)element.GetValue(ShiftWheelScrollsHorizontallyProperty);
 
         //[CanBeNull]
-        private static T FindDescendant<T>([MaybeNull] this DependencyObject d) where T : DependencyObject
+        private static T? FindDescendant<T>([MaybeNull] this DependencyObject d) where T : DependencyObject
         {
             if (d == null)
                 return null;

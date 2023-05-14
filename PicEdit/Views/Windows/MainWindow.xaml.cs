@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PicEdit.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PicEdit.ViewModels;
 
 namespace PicEdit
 {
@@ -24,6 +26,10 @@ namespace PicEdit
         public MainWindow()
         {
             InitializeComponent();
+
+            WindowService windowService = new WindowService();
+
+            DataContext = new MainWindowViewModel(windowService);
         }
 
         #region ToolBar color settings

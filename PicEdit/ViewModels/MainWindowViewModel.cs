@@ -22,6 +22,8 @@ using System.Windows.Media.Media3D;
 using System.Diagnostics.Contracts;
 using System.Diagnostics;
 using Microsoft.Internal.VisualStudio.PlatformUI;
+using Application = System.Windows.Application;
+using PicEdit.Services;
 
 namespace PicEdit.ViewModels
 {
@@ -48,19 +50,21 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
-        Stream imageStream;
+        private IWindowService _windowService;
+
+        Stream? imageStream;
         ObservableCollection<BitmapSource> obCollection;
         int position = -1;
         ObservableCollection<StrokeCollection> obStrokeCollection;
         int strPos = -1;
 
         #region MainImage
-        private BitmapSource _image;
+        private BitmapSource? _image;
 
         /// <summary>
         /// Main image.
         /// </summary>
-        public BitmapSource Image
+        public BitmapSource? Image
         {
             get => _image;
             set
@@ -75,7 +79,7 @@ namespace PicEdit.ViewModels
         /// <summary>
         /// Format of the main image.
         /// </summary>
-        private ImageFormat _format;
+        private ImageFormat? _format;
         #endregion
 
         #region MainImage Save Format
@@ -873,7 +877,7 @@ namespace PicEdit.ViewModels
                     for (int i = count - 1; i > position; i--)
                         obCollection.RemoveAt(i);
 
-                InkCanvas ink = p as InkCanvas;
+                InkCanvas? ink = p as InkCanvas;
                 obCollection.Add(ConvertInkCanvasToBitmapSource(ink));
                 Image = obCollection[++position];
                 InkCanvasStrokes.Clear();
@@ -902,6 +906,18 @@ namespace PicEdit.ViewModels
         }
         #endregion
 
+        #region ShowAboutWindowCommand
+        public ICommand ShowAboutWindowCommand { get; }
+
+        private bool OnShowAboutWindowCommandExecute(object p) => true;
+
+        private void OnShowAboutWindowCommandExecuted(object p)
+        {
+            _windowService.OpenWindow();
+        }
+        #endregion
+
+
         #endregion
 
         #region Functions
@@ -927,7 +943,7 @@ namespace PicEdit.ViewModels
             }
         }
 
-        private Stream StreamFromBitmapSource(BitmapSource writeBmp)
+        private Stream StreamFromBitmapSource(BitmapSource? writeBmp)
         {
             Stream bmp = new MemoryStream();
 
@@ -938,7 +954,7 @@ namespace PicEdit.ViewModels
             return bmp;
         }
 
-        private void SaveImage(string path, ImageFormat format, object p = null)
+        private void SaveImage(string path, ImageFormat? format, object? p = null)
         {
             if (imageStream != null)
             {
@@ -992,12 +1008,13 @@ namespace PicEdit.ViewModels
                 }
                 imageStream = StreamFromBitmapSource(Image);
                 var img = System.Drawing.Image.FromStream(imageStream);
+                format ??= ImageFormat.Png;
                 img.Save(path, format);
                 System.Windows.MessageBox.Show("Image saved successfully", "Image saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas drawCanvas)
+        private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas? drawCanvas)
         {
             //string newImagePath = "./strokes.png";
             //InkCanvas inkCanvas = drawCanvas;
@@ -1029,31 +1046,34 @@ namespace PicEdit.ViewModels
             //encoder.Frames.Add(BitmapFrame.Create(rtb));
             //rtb.Render(drawCanvas);
 
+            if(drawCanvas != null)
+            {
+                var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
+                rtb.Render(drawCanvas);
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(rtb));
 
-            var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
-            rtb.Render(drawCanvas);
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(rtb));
+                //save to memory stream or file 
+                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+                encoder.Save(ms);
 
-            //save to memory stream or file 
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            encoder.Save(ms);
-
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.StreamSource = ms;
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-            return bitmap;
-
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.StreamSource = ms;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+                return bitmap;
+            }
+            else
+                return new BitmapImage();
 
             //create bitmap with memory stream or file
             //Bitmap bitmap = new Bitmap(ms);
             //return ConvertBitmapToBitmapSource(bitmap);
         }
 
-        public static byte[] ConvertWriteableBitmapToByteArray(WriteableBitmap wb)
+        public static byte[]? ConvertWriteableBitmapToByteArray(WriteableBitmap wb)
         {
             if (wb == null || wb.PixelHeight == 0 || wb.PixelWidth == 0)
                 return null;
@@ -1236,8 +1256,11 @@ namespace PicEdit.ViewModels
 
         #endregion
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IWindowService windowService)
         {
+
+            _windowService = windowService;
+
             obCollection = new ObservableCollection<BitmapSource>();
             obStrokeCollection = new ObservableCollection<StrokeCollection>
             {
@@ -1277,6 +1300,8 @@ namespace PicEdit.ViewModels
             StrokeChangedCommand = new LambdaCommand(OnStrokeChangedCommandExecuted, OnStrokeChangedCommandExecute);
 
             IsBrushToolCheckedCommand = new LambdaCommand(OnIsBrushToolCheckedCommandExecuted, OnIsBrushToolCheckedCommandExecute);
+
+            ShowAboutWindowCommand = new LambdaCommand(OnShowAboutWindowCommandExecuted, OnShowAboutWindowCommandExecute);
 
             #endregion
         }
