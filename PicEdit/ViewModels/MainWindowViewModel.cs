@@ -736,17 +736,20 @@ namespace PicEdit.ViewModels
                 string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
                 _saveFormat = _saveFormat == chosenFormat ? _saveFormat : chosenFormat;
                 ImageFormat saveFormat = ToImageFormat(_saveFormat);
-                Bitmap bmp;
-                using (MemoryStream outStream = new MemoryStream())
-                {
-                    BitmapEncoder enc = new BmpBitmapEncoder();
-                    enc.Frames.Add(BitmapFrame.Create(Image));
-                    enc.Save(outStream);
-                    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
-                    bmp = new Bitmap(bitmap);
-                }
+                //Bitmap bmp;
+                //using (MemoryStream outStream = new MemoryStream())
+                //{
+                //    BitmapEncoder enc = new BmpBitmapEncoder();
+                //    enc.Frames.Add(BitmapFrame.Create(Image));
+                //    enc.Save(outStream);
+                //    System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                //    bmp = new Bitmap(bitmap);
+                //}
 
-                bmp.Save(fileName, saveFormat);
+                //bmp.Save(fileName, saveFormat);
+                //System.Windows.MessageBox.Show("Image saved successfully", "Image saved", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                SaveImage(fileName, saveFormat, p);
             }
         }
         #endregion
@@ -916,7 +919,6 @@ namespace PicEdit.ViewModels
             _windowService.OpenWindow();
         }
         #endregion
-
 
         #endregion
 
