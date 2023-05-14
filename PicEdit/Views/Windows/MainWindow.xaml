@@ -739,10 +739,7 @@
 
         <!--#region Button Style -->
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource DarkGray}" />
-            <Setter Property="Foreground" Value="{DynamicResource DarkGrey}" />
-            <Setter Property="FontSize" Value="15" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Background" Value="{x:Null}" />
 
             <Setter Property="Template">
                 <Setter.Value>
@@ -755,11 +752,11 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource Gray}"/>
+                                <Setter Property="Background" Value="{DynamicResource LightGrey}"/>
                             </Trigger>
 
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="Green" />
+                                <Setter Property="Background" Value="{DynamicResource Gray}" />
                                 <Setter Property="Foreground" Value="White" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -769,8 +766,88 @@
         </Style>
         <!--#endregion-->
 
-        <!--#region Button Style -->
- 
+        <!--#region ToggleButton Style -->
+        <Style TargetType="{x:Type ToggleButton}">
+            <Setter Property="Background" Value="Transparent" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource LightGrey}"/>
+                            </Trigger>
+
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="#777777" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Slider Style -->
+
+        <Style x:Key="SliderThumbStyle" TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="OverridesDefaultStyle" Value="false"/>
+            <Setter Property="Height" Value="18"/>
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <Grid.OpacityMask>
+                                <VisualBrush Visual="{Binding ElementName=Border}" />
+                            </Grid.OpacityMask>
+                            <Border x:Name="Border" CornerRadius="5" Background="{DynamicResource DarkGray}" BorderThickness="0.5"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="#b6b6b6"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Border" Property="Background" Value="Gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid VerticalAlignment="Center">
+                            <Border x:Name="borderBackground" Margin="6,0" Height="4" Background="Gray" CornerRadius="1" />
+                            <Canvas Margin="0,-4,0,0" VerticalAlignment="Center">
+                                <Border x:Name="PART_SelectionRange" HorizontalAlignment="Left" Height="4" Background="{TemplateBinding Foreground}" />
+                            </Canvas>
+                            <Track x:Name="PART_Track">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SliderThumbStyle}" />
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="SelectionStart" Value="{Binding Minimum, RelativeSource={RelativeSource Self}}" />
+            <Setter Property="SelectionEnd" Value="{Binding Value, RelativeSource={RelativeSource Self}}" />
+            <Setter Property="Foreground" Value="#e3e3e3" />
+        </Style>
+
+
         <!--#endregion-->
 
         <!--<Color x:Key="BorderMediumColor">#FF888888</Color>
@@ -904,27 +981,27 @@
                         <StackPanel Grid.Row="0" Grid.ColumnSpan="5" 
                                     Background="#FF424242"
                                     Orientation="Horizontal">
-                            <Button Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
+                            <Button BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
-                                    Height="20" 
-                                    Margin="14, 0, 4, 0"
+                                    Height="20"
+                                    Width="25"
+                                    Margin="14, 0, 7, 0"
                                     Command="{Binding SaveCommand}"
                                     CommandParameter="{Binding ElementName=DrawCanvas}">
-                                <phosfill:IconImage Icon="FloppyDisk" Foreground="{DynamicResource DarkGray}"/>
+                                <phosfill:IconImage Icon="FloppyDisk" Height="17" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
-                            <Button Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
+                            <Button BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
                                     Height="20" 
+                                    Width="22"
                                     Margin="5, 0, 0, 0"
                                     Command="{Binding UndoCommand}">
                                 <matround:IconImage Icon="Undo" Height="8" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
-                            <Button Background="{x:Null}"
-                                    BorderBrush="{x:Null}"
+                            <Button BorderBrush="{x:Null}"
                                     DockPanel.Dock="Left" 
                                     Height="20"
+                                    Width="22"
                                     Command="{Binding RedoCommand}">
                                 <matround:IconImage Icon="Redo" Height="8" Foreground="{DynamicResource DarkGray}"/>
                             </Button>
@@ -941,7 +1018,6 @@
                                 <RadioButton x:Name="CursorTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 3, 0, 1"
                                              Width="30" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              IsChecked="True">
                                     <phosfill:IconImage Icon="Cursor" Width="18" Foreground="DarkGray" />
@@ -950,7 +1026,6 @@
                                 <RadioButton x:Name="ScaleTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 3, 0, 1"
                                              Width="30" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              IsChecked="{Binding IsScaleToolChecked, Mode=OneWayToSource}">
                                     <mat:IconImage Icon="Photo_Size_Select_Large" Width="25" Foreground="DarkGray"/>
@@ -960,7 +1035,6 @@
                                 <RadioButton x:Name="RotationTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              IsChecked="{Binding IsRotationToolChecked, Mode=OneWayToSource}">
                                     <mat:IconImage Icon="Rotate_Right" Width="22" Foreground="DarkGray"/>
@@ -970,7 +1044,6 @@
                                 <RadioButton x:Name="BrightnessTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
-                                             Background="Transparent"
                                              IsChecked="{Binding IsCropToolChecked, Mode=OneWayToSource}"
                                              BorderThickness="0">
                                     <mat:IconImage Icon="Crop" Width="25" Foreground="DarkGray"/>
@@ -979,7 +1052,6 @@
                                 <RadioButton x:Name="BrushTool" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 1"
                                              Width="30" Height="30"
-                                             Background="Transparent"
                                              IsChecked="{Binding IsBrushToolChecked, Mode=OneWayToSource}"
                                              BorderThickness="0">
                                     <mat:IconImage Icon="Brush" Width="22" Foreground="DarkGray"/>
@@ -1105,6 +1177,7 @@
                                         Margin="8, 0, 8, 4"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding SliderXValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsScaleEnabled}"/>
 
                                 <Slider Grid.Row="4" Grid.Column="1"
@@ -1115,25 +1188,51 @@
                                         Margin="8, 4, 8, 0"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding SliderYValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsScaleEnabled}"/>
 
-                                <ToggleButton IsChecked="{Binding IsScaleChecked}"
+                                <ToggleButton IsChecked="{Binding IsScaleChecked}"                                             
                                               Grid.Row="3"                                            
                                               Grid.Column="1"
                                               IsEnabled="{Binding IsScaleEnabled}"
-                                              Width="25"
-                                              Height="20"
-                                              Background="Transparent"
+                                              Width="30"
+                                              Height="25"
                                               BorderThickness="0">
                                     
                                     <ToggleButton.Style>
                                         <Style TargetType="{x:Type ToggleButton}">
                                             <Setter Property="Content" Value="{StaticResource ChainOnIcon}" />
+
+                                            <Setter Property="Background" Value="Transparent" />
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                                                            <Grid>
+                                                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                                                            </Grid>
+                                                        </Border>
+
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="{DynamicResource LightGrey}"/>
+                                                            </Trigger>
+
+                                                            <Trigger Property="IsChecked" Value="True">
+                                                                <Setter Property="Background" Value="#777777" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
                                             <Style.Triggers>
                                                 <Trigger Property="IsChecked" Value="true">
                                                     <Setter Property="Content" Value="{StaticResource ChainOffIcon}" />
                                                 </Trigger>
                                             </Style.Triggers>
+
                                         </Style>
                                     </ToggleButton.Style>
                                     
@@ -1192,6 +1291,7 @@
                                             Margin="8, 0, 8, 4"
                                             IsSelectionRangeEnabled="True"
                                             Value="{Binding AngleValue}"
+                                            Style="{StaticResource SliderStyle}"
                                             IsEnabled="{Binding IsRotationEnabled}"/>
 
                                     <TextBlock Grid.Row="2"
@@ -1237,10 +1337,9 @@
 
                                 <RadioButton x:Name="PenTool"
                                              Grid.Row="2" Grid.Column="1"
-                                             Style="{StaticResource {x:Type ToggleButton}}"
+                                             Style="{StaticResource {x:Type ToggleButton}}"                                           
                                              Margin="0, 5"
                                              Width="38" Height="30"
-                                             Background="Transparent"
                                              IsChecked="{Binding IsSelectToolChecked}"
                                              BorderThickness="0">
                                     <phos:IconImage Icon="Cursor" Width="20" Foreground="DarkGray"/>
@@ -1251,7 +1350,6 @@
                                              Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="38" Height="30"
-                                             Background="Transparent"
                                              IsChecked="{Binding IsPenToolChecked}"
                                              BorderThickness="0">
                                     <phos:IconImage Icon="PencilSimpleLine" Width="20" Foreground="DarkGray"/>
@@ -1262,7 +1360,6 @@
                                              Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="38" Height="30"
-                                             Background="Transparent"
                                              IsChecked="{Binding IsEraserToolChecked}"
                                              BorderThickness="0">
                                     <phos:IconImage Icon="Eraser" Width="22" Foreground="DarkGray"/>
@@ -1287,6 +1384,7 @@
                                         Margin="30, 1, 8, 4"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding ThicknessValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsPaintEnabled}"/>
 
                                 <TextBlock Grid.Row="4"
@@ -1357,6 +1455,7 @@
                                         Margin="8, 0, 8, 0"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding TopCropValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsCropEnabled}"/>
 
                                 <TextBlock Text="Bottom"
@@ -1378,6 +1477,7 @@
                                         Margin="8, 0, 8, 0"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding BottomCropValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsCropEnabled}"/>
 
 
@@ -1400,6 +1500,7 @@
                                         Margin="8, 0, 8, 0"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding RightCropValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsCropEnabled}"/>
 
                                 <TextBlock Text="Left"
@@ -1421,6 +1522,7 @@
                                         Margin="8, 0, 8, 0"
                                         IsSelectionRangeEnabled="True"
                                         Value="{Binding LeftCropValue}"
+                                        Style="{StaticResource SliderStyle}"
                                         IsEnabled="{Binding IsCropEnabled}"/>
 
                             </Grid>
@@ -1505,7 +1607,6 @@
                                 <RadioButton x:Name="PngFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              IsChecked="True"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
@@ -1516,7 +1617,6 @@
                                 <RadioButton x:Name="JpgFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
                                              CommandParameter="jpg">
@@ -1526,7 +1626,6 @@
                                 <RadioButton x:Name="GifFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
                                              CommandParameter="gif">
@@ -1536,31 +1635,28 @@
                                 <RadioButton x:Name="BmpFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
                                              CommandParameter="bmp">
-                                    <Image Source="/Images/BMP.png" Height="14" />
+                                    <Image Source="/Images/BMP.png" Height="13" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="TiffFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
                                              CommandParameter="tiff">
-                                    <Image Source="/Images/TIFF.png" Height="14" />
+                                    <Image Source="/Images/TIFF.png" Height="103" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                                 <RadioButton x:Name="IconFormat" Style="{StaticResource {x:Type ToggleButton}}"
                                              Margin="0, 5"
                                              Width="40" Height="30"
-                                             Background="Transparent"
                                              BorderThickness="0"
                                              Command="{Binding ChangeSaveImageFormatCommand}"
                                              CommandParameter="ico">
-                                    <Image Source="/Images/ICON.png" Height="14" />
+                                    <Image Source="/Images/ICON.png" Height="13" />
                                 </RadioButton>
                                 <Separator Background="#606060"/>
                             </ToolBar>
@@ -1614,7 +1710,39 @@
                                     FontFamily="{StaticResource MontserratMedium}"
                                     Margin="20, 0, 0, 0"
                                     Content="Save"
-                                Command="{Binding ConvertImageCommand}"/>
+                                Command="{Binding ConvertImageCommand}">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Background" Value="{DynamicResource DarkGray}" />
+                                            <Setter Property="Foreground" Value="{DynamicResource DarkGrey}" />
+                                            <Setter Property="FontSize" Value="15" />
+                                            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                                                            <Grid>
+                                                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                                                            </Grid>
+                                                        </Border>
+
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="{DynamicResource Gray}"/>
+                                                            </Trigger>
+
+                                                            <Trigger Property="IsPressed" Value="True">
+                                                                <Setter Property="Background" Value="Green" />
+                                                                <Setter Property="Foreground" Value="White" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
                             </StatusBarItem>
                         </StatusBar>
 
