@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using PicEdit.Services;
+using System.Drawing;
 
 namespace PicEdit.ViewModels
 {
@@ -897,11 +898,23 @@ namespace PicEdit.ViewModels
             }
         }
 
-        private Stream StreamFromBitmapSource(BitmapSource? writeBmp)
+        private Stream StreamFromBitmapSource(BitmapSource? writeBmp, ImageFormat? format)
         {
             Stream bmp = new MemoryStream();
 
-            BitmapEncoder enc = new BmpBitmapEncoder();
+            BitmapEncoder enc;
+
+            if(format == ImageFormat.Jpeg)
+                enc = new JpegBitmapEncoder();
+            else if(format == ImageFormat.Gif)
+                enc = new GifBitmapEncoder();
+            else if(format == ImageFormat.Bmp)
+                enc = new BmpBitmapEncoder();
+            else if(format == ImageFormat.Tiff)
+                enc = new TiffBitmapEncoder();
+            else
+                enc = new PngBitmapEncoder();
+
             enc.Frames.Add(BitmapFrame.Create(writeBmp));
             enc.Save(bmp);
 
@@ -960,12 +973,76 @@ namespace PicEdit.ViewModels
                     obStrokeCollection.Add(new StrokeCollection());
                     strPos = 0;
                 }
-                imageStream = StreamFromBitmapSource(Image);
+                imageStream = StreamFromBitmapSource(Image, format);
                 var img = System.Drawing.Image.FromStream(imageStream);
                 format ??= ImageFormat.Png;
-                img.Save(path, format);
+                if (format == ImageFormat.Icon)
+                {
+                    Bitmap bmp;
+                    using (MemoryStream outStream = new MemoryStream())
+                    {
+                        BitmapEncoder enc = new PngBitmapEncoder();
+                        enc.Frames.Add(BitmapFrame.Create(Image));
+                        enc.Save(outStream);
+                        System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+                        bmp = new Bitmap(bitmap);
+                    }
+                    SaveAsIcon(bmp, path);
+                }
+                else
+                    img.Save(path, format);
+
+                _path = path;
+                imageStream = new System.IO.MemoryStream(File.ReadAllBytes(path));
+
                 System.Windows.MessageBox.Show("Image saved successfully", "Image saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+        }
+
+        void SaveAsIcon(Bitmap SourceBitmap, string FilePath)
+        {
+            FileStream FS = new FileStream(FilePath, FileMode.Create);
+            // ICO header
+            FS.WriteByte(0); FS.WriteByte(0);
+            FS.WriteByte(1); FS.WriteByte(0);
+            FS.WriteByte(1); FS.WriteByte(0);
+
+            // Image size
+            FS.WriteByte((byte)SourceBitmap.Width);
+            FS.WriteByte((byte)SourceBitmap.Height);
+            // Palette
+            FS.WriteByte(0);
+            // Reserved
+            FS.WriteByte(0);
+            // Number of color planes
+            FS.WriteByte(0); FS.WriteByte(0);
+            // Bits per pixel
+            FS.WriteByte(32); FS.WriteByte(0);
+
+            // Data size, will be written after the data
+            FS.WriteByte(0);
+            FS.WriteByte(0);
+            FS.WriteByte(0);
+            FS.WriteByte(0);
+
+            // Offset to image data, fixed at 22
+            FS.WriteByte(22);
+            FS.WriteByte(0);
+            FS.WriteByte(0);
+            FS.WriteByte(0);
+
+            // Writing actual data
+            SourceBitmap.Save(FS, ImageFormat.Png);
+
+            // Getting data length (file length minus header)
+            long Len = FS.Length - 22;
+
+            // Write it in the correct place
+            FS.Seek(14, SeekOrigin.Begin);
+            FS.WriteByte((byte)Len);
+            FS.WriteByte((byte)(Len >> 8));
+
+            FS.Close();
         }
 
         private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas? drawCanvas)
@@ -991,19 +1068,6 @@ namespace PicEdit.ViewModels
             }
             else
                 return new BitmapImage();
-        }
-
-        public static byte[]? ConvertWriteableBitmapToByteArray(WriteableBitmap wb)
-        {
-            if (wb == null || wb.PixelHeight == 0 || wb.PixelWidth == 0)
-                return null;
-
-            int stride = wb.PixelWidth * wb.Format.BitsPerPixel / 8;
-            int size = stride * wb.PixelHeight;
-            byte[] buffer = new byte[size];
-            wb.CopyPixels(buffer, stride, 0);
-
-            return buffer;
         }
 
         private CroppedBitmap CropImage(int left, int top, int right, int bottom)
