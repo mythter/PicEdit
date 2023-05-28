@@ -19,12 +19,42 @@ namespace PicEdit.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        /// <summary>
+        /// Variable for interaction of windows.
+        /// </summary>
         IWindowService _windowService;
-        Stream? imageStream;
-        ObservableCollection<BitmapSource> obCollection;
+
+        /// <summary>
+        /// Stream of main image.
+        /// </summary>
+        Stream? _imageStream;
+
+        /// <summary>
+        /// Collection to store changes of main image.
+        /// </summary>
+        ObservableCollection<BitmapSource> _obCollection;
         int position = -1;
-        ObservableCollection<StrokeCollection> obStrokeCollection;
+
+        /// <summary>
+        /// Collection to store strokes while painting.
+        /// </summary>
+        ObservableCollection<StrokeCollection> _obStrokeCollection;
         int strPos = -1;
+
+        /// <summary>
+        /// Path of the main image.
+        /// </summary>
+        private string _path = "";
+
+        /// <summary>
+        /// Format to save the main image.
+        /// </summary>
+        private string _saveFormat = "png";
+
+        /// <summary>
+        /// Format of the main image.
+        /// </summary>
+        private ImageFormat? _format;
 
         #region Window title
         private string _title = "PicEdit";
@@ -54,27 +84,6 @@ namespace PicEdit.ViewModels
                 IsSaveEnabled = true;
             }
         }
-        #endregion
-
-        #region MainImage Format
-        /// <summary>
-        /// Format of the main image.
-        /// </summary>
-        private ImageFormat? _format;
-        #endregion
-
-        #region MainImage Save Format
-        /// <summary>
-        /// Format to save the main image.
-        /// </summary>
-        private string _saveFormat = "png";
-        #endregion
-
-        #region MainImage Path
-        /// <summary>
-        /// Path of the main image.
-        /// </summary>
-        private string _path = "";
         #endregion
 
         #region Is Scale Relation Checked
@@ -113,13 +122,13 @@ namespace PicEdit.ViewModels
 
                 if (!IsRotationToolChecked && Image != null && AngleValue != 0)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
-                    Image = obCollection[++position];
+                    _obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
+                    Image = _obCollection[++position];
                     AngleValue = 0;
                 }
             }
@@ -146,13 +155,13 @@ namespace PicEdit.ViewModels
 
                 if ((SliderXValue != 100 || SliderYValue != 100) && Image != null)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
-                    Image = obCollection[++position];
+                    _obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
+                    Image = _obCollection[++position];
                     SliderXValue = 100;
                     SliderYValue = 100;
                 }
@@ -592,13 +601,13 @@ namespace PicEdit.ViewModels
 
                 if (!IsCropToolChecked && Image != null && (TopCropValue != 0 || BottomCropValue != 0 || LeftCropValue != 0 || RightCropValue != 0))
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue));
-                    Image = obCollection[++position];
+                    _obCollection.Add(CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue));
+                    Image = _obCollection[++position];
                     TopCropValue = BottomCropValue = RightCropValue = LeftCropValue = 0;
                 }
             }
@@ -614,7 +623,7 @@ namespace PicEdit.ViewModels
 
         private void OnCloseApplicationCommandExecuted(object p)
         {
-            imageStream?.Close();
+            _imageStream?.Close();
             System.Windows.Application.Current.Shutdown();
         }
         #endregion
@@ -631,20 +640,20 @@ namespace PicEdit.ViewModels
             open.Filter = "Image Files(*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF;*.ICO)|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF;*.ICO";
             if (open.ShowDialog() == Forms.DialogResult.OK)
             {
-                imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
+                _imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
                 string format = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
                 _format = ToImageFormat(format);
                 _path = open.FileName;
 
                 var bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.StreamSource = imageStream;
+                bitmap.StreamSource = _imageStream;
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
                 bitmap.Freeze();
                 Image = bitmap;
 
-                obCollection.Add(Image);
+                _obCollection.Add(Image);
                 ++position;
 
                 OnPropertyChanged(nameof(Image));
@@ -794,10 +803,10 @@ namespace PicEdit.ViewModels
         {
             if (position > 0 || strPos > 0)
             {
-                if (IsBrushToolChecked && obStrokeCollection.Count > 1 && strPos > 0)
-                    InkCanvasStrokes = new StrokeCollection(obStrokeCollection[--strPos]);
-                else if (position > 0 && (!IsBrushToolChecked || (IsBrushToolChecked && obStrokeCollection.Count == 1)))
-                    Image = obCollection[--position];
+                if (IsBrushToolChecked && _obStrokeCollection.Count > 1 && strPos > 0)
+                    InkCanvasStrokes = new StrokeCollection(_obStrokeCollection[--strPos]);
+                else if (position > 0 && (!IsBrushToolChecked || (IsBrushToolChecked && _obStrokeCollection.Count == 1)))
+                    Image = _obCollection[--position];
             }
         }
         #endregion
@@ -809,12 +818,12 @@ namespace PicEdit.ViewModels
 
         private void OnRedoCommandExecuted(object p)
         {
-            if (position < obCollection.Count - 1 || strPos < obStrokeCollection.Count - 1)
+            if (position < _obCollection.Count - 1 || strPos < _obStrokeCollection.Count - 1)
             {
-                if (IsBrushToolChecked && obStrokeCollection.Count > 1 && strPos < obStrokeCollection.Count - 1)
-                    InkCanvasStrokes = new StrokeCollection(obStrokeCollection[++strPos]);
-                else if ((position < obCollection.Count - 1) && (!IsBrushToolChecked || (IsBrushToolChecked && obStrokeCollection.Count == 1)))
-                    Image = obCollection[++position];
+                if (IsBrushToolChecked && _obStrokeCollection.Count > 1 && strPos < _obStrokeCollection.Count - 1)
+                    InkCanvasStrokes = new StrokeCollection(_obStrokeCollection[++strPos]);
+                else if ((position < _obCollection.Count - 1) && (!IsBrushToolChecked || (IsBrushToolChecked && _obStrokeCollection.Count == 1)))
+                    Image = _obCollection[++position];
             }
         }
         #endregion
@@ -826,19 +835,19 @@ namespace PicEdit.ViewModels
 
         private void OnIsBrushToolCheckedCommandExecuted(object p)
         {
-            if (Image != null && obStrokeCollection.Count > 1)
+            if (Image != null && _obStrokeCollection.Count > 1)
             {
-                int count = obCollection.Count;
+                int count = _obCollection.Count;
                 if (position != count - 1)
                     for (int i = count - 1; i > position; i--)
-                        obCollection.RemoveAt(i);
+                        _obCollection.RemoveAt(i);
 
                 InkCanvas? ink = p as InkCanvas;
-                obCollection.Add(ConvertInkCanvasToBitmapSource(ink));
-                Image = obCollection[++position];
+                _obCollection.Add(ConvertInkCanvasToBitmapSource(ink));
+                Image = _obCollection[++position];
                 InkCanvasStrokes.Clear();
-                obStrokeCollection.Clear();
-                obStrokeCollection.Add(new StrokeCollection());
+                _obStrokeCollection.Clear();
+                _obStrokeCollection.Add(new StrokeCollection());
                 strPos = 0;
             }
             IsInkCanvasVisible = false;
@@ -852,12 +861,12 @@ namespace PicEdit.ViewModels
 
         private void OnStrokeChangedCommandExecuted(object p)
         {
-            int count = obStrokeCollection.Count;
+            int count = _obStrokeCollection.Count;
             if (strPos != count - 1)
                 for (int i = count - 1; i > strPos; i--)
-                    obStrokeCollection.RemoveAt(i);
+                    _obStrokeCollection.RemoveAt(i);
 
-            obStrokeCollection.Add(new StrokeCollection(InkCanvasStrokes));
+            _obStrokeCollection.Add(new StrokeCollection(InkCanvasStrokes));
             ++strPos;
         }
         #endregion
@@ -923,58 +932,58 @@ namespace PicEdit.ViewModels
 
         private void SaveImage(string path, ImageFormat? format, object? p = null)
         {
-            if (imageStream != null)
+            if (_imageStream != null)
             {
                 if (SliderXValue != 100 || SliderYValue != 100)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
-                    Image = obCollection[++position];
+                    _obCollection.Add(new TransformedBitmap(Image, new ScaleTransform(ScaleXValue, ScaleYValue)));
+                    Image = _obCollection[++position];
                     SliderXValue = 100;
                     SliderYValue = 100;
                 }
                 if (AngleValue != 0)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
-                    Image = obCollection[++position];
+                    _obCollection.Add(new TransformedBitmap(Image, new RotateTransform(AngleValue)));
+                    Image = _obCollection[++position];
                     AngleValue = 0;
                 }
                 if (TopCropValue != 0 || BottomCropValue != 0 || LeftCropValue != 0 || RightCropValue != 0)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue));
-                    Image = obCollection[++position];
+                    _obCollection.Add(CropImage(LeftCropValue, TopCropValue, RightCropValue, BottomCropValue));
+                    Image = _obCollection[++position];
                     TopCropValue = BottomCropValue = RightCropValue = LeftCropValue = 0;
                 }
-                if (IsInkCanvasVisible && p is InkCanvas inkCanv && obStrokeCollection.Count > 1)
+                if (IsInkCanvasVisible && p is InkCanvas inkCanv && _obStrokeCollection.Count > 1)
                 {
-                    int count = obCollection.Count;
+                    int count = _obCollection.Count;
                     if (position != count - 1)
                         for (int i = count - 1; i > position; i--)
-                            obCollection.RemoveAt(i);
+                            _obCollection.RemoveAt(i);
 
-                    obCollection.Add(ConvertInkCanvasToBitmapSource(inkCanv));
-                    Image = obCollection[++position];
+                    _obCollection.Add(ConvertInkCanvasToBitmapSource(inkCanv));
+                    Image = _obCollection[++position];
                     InkCanvasStrokes.Clear();
-                    obStrokeCollection.Clear();
-                    obStrokeCollection.Add(new StrokeCollection());
+                    _obStrokeCollection.Clear();
+                    _obStrokeCollection.Add(new StrokeCollection());
                     strPos = 0;
                 }
-                imageStream = StreamFromBitmapSource(Image, format);
-                var img = System.Drawing.Image.FromStream(imageStream);
+                _imageStream = StreamFromBitmapSource(Image, format);
+                var img = System.Drawing.Image.FromStream(_imageStream);
                 format ??= ImageFormat.Png;
                 if (format == ImageFormat.Icon)
                 {
@@ -993,7 +1002,7 @@ namespace PicEdit.ViewModels
                     img.Save(path, format);
 
                 _path = path;
-                imageStream = new System.IO.MemoryStream(File.ReadAllBytes(path));
+                _imageStream = new System.IO.MemoryStream(File.ReadAllBytes(path));
 
                 System.Windows.MessageBox.Show("Image saved successfully", "Image saved", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -1072,11 +1081,11 @@ namespace PicEdit.ViewModels
 
         private CroppedBitmap CropImage(int left, int top, int right, int bottom)
         {
-            left = (int)(obCollection[position].PixelWidth * left / 100f);
-            right = (int)(obCollection[position].PixelWidth * right / 100f);
-            top = (int)(obCollection[position].PixelHeight * top / 100f);
-            bottom = (int)(obCollection[position].PixelHeight * bottom / 100f);
-            return new CroppedBitmap(obCollection[position], new Int32Rect(left, top, obCollection[position].PixelWidth - left - right, obCollection[position].PixelHeight - bottom - top));
+            left = (int)(_obCollection[position].PixelWidth * left / 100f);
+            right = (int)(_obCollection[position].PixelWidth * right / 100f);
+            top = (int)(_obCollection[position].PixelHeight * top / 100f);
+            bottom = (int)(_obCollection[position].PixelHeight * bottom / 100f);
+            return new CroppedBitmap(_obCollection[position], new Int32Rect(left, top, _obCollection[position].PixelWidth - left - right, _obCollection[position].PixelHeight - bottom - top));
         }
 
         #endregion
@@ -1084,9 +1093,9 @@ namespace PicEdit.ViewModels
         public MainWindowViewModel(IWindowService windowService)
         {
             _windowService = windowService;
-            obCollection = new ObservableCollection<BitmapSource>();
+            _obCollection = new ObservableCollection<BitmapSource>();
             _inkCanvasStrokes = new StrokeCollection();
-            obStrokeCollection = new ObservableCollection<StrokeCollection>
+            _obStrokeCollection = new ObservableCollection<StrokeCollection>
             {
                 new StrokeCollection()
             };
