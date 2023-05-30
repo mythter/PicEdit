@@ -19,6 +19,8 @@ namespace PicEdit.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
+        #region Fields
+
         /// <summary>
         /// Variable for interaction of windows.
         /// </summary>
@@ -55,6 +57,10 @@ namespace PicEdit.ViewModels
         /// Format of the main image.
         /// </summary>
         private ImageFormat? _format;
+
+        #endregion
+
+        #region Properties
 
         #region Window title
         private string _title = "PicEdit";
@@ -612,6 +618,8 @@ namespace PicEdit.ViewModels
                 }
             }
         }
+        #endregion 
+
         #endregion
 
         #region Commands
@@ -913,13 +921,13 @@ namespace PicEdit.ViewModels
 
             BitmapEncoder enc;
 
-            if(format == ImageFormat.Jpeg)
+            if (format == ImageFormat.Jpeg)
                 enc = new JpegBitmapEncoder();
-            else if(format == ImageFormat.Gif)
+            else if (format == ImageFormat.Gif)
                 enc = new GifBitmapEncoder();
-            else if(format == ImageFormat.Bmp)
+            else if (format == ImageFormat.Bmp)
                 enc = new BmpBitmapEncoder();
-            else if(format == ImageFormat.Tiff)
+            else if (format == ImageFormat.Tiff)
                 enc = new TiffBitmapEncoder();
             else
                 enc = new PngBitmapEncoder();
@@ -1056,7 +1064,7 @@ namespace PicEdit.ViewModels
 
         private BitmapSource ConvertInkCanvasToBitmapSource(InkCanvas? drawCanvas)
         {
-            if(drawCanvas != null)
+            if (drawCanvas != null)
             {
                 var rtb = new RenderTargetBitmap((int)drawCanvas.Width, (int)drawCanvas.Height, 96d, 96d, PixelFormats.Default);
                 rtb.Render(drawCanvas);
