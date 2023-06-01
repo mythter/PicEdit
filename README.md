@@ -36,9 +36,11 @@ There are six main formats:
 4. BMP
 5. TIFF
 6. ICO
+
 ❗❗❗
 Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
 Other images dimensions converting might be fine but not guaranteed.
+
 ❗❗❗
 ### Keyboard shortcuts
 ```Ctrl``` + ```Mouse Wheel``` - zoom in / zoom out.
