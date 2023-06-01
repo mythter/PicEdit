@@ -42,7 +42,7 @@ There are six main formats:
 
 To convert image select required format and click on ```Save``` button on the bottom panel.
 
-❗❗❗ Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
+❗❗❗ Successful converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
 Other images dimensions converting might be fine but not guaranteed. ❗❗❗
 ### Keyboard shortcuts
 ```Ctrl``` + ```Mouse Wheel``` – zoom in / zoom out. <br/>
