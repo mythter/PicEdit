@@ -13,7 +13,7 @@ To open image go to ```File``` -> ```Open```.
 
 ### Image saving
 To save image in the same file go to ```File``` -> ```Save``` or clicking on floppy disk icon ![floppy disk icon] in the top left corner. <br/>
-To save image to another file go to ```File``` -> ```Save as```.
+To save image in another file go to ```File``` -> ```Save as```.
 
 ## Using
 The editor has two tabs:
