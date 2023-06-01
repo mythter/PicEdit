@@ -13,7 +13,7 @@ A simple WPF image editor and convertor
 ### Image opening
 To open image go to ```File``` -> ```Open```.
 
-### Image opening
+### Image saving
 To save image in the same file go to ```File``` -> ```Save``` or clicking on floppy disk icon [floppy disk icon] in the top left corner.
 
 The editor has two tabs:
