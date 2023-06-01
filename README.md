@@ -41,11 +41,11 @@ To convert image select required format and click on ```Save``` button on the bo
 ❗❗❗ Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
 Other images dimensions converting might be fine but not guaranteed. ❗❗❗
 ### Keyboard shortcuts
-```Ctrl``` + ```Mouse Wheel``` - zoom in / zoom out.  
-```Shift``` + ```Mouse Wheel``` - left / right moving when image zoomed in.  
+```Ctrl``` + ```Mouse Wheel``` – zoom in / zoom out. <br/>
+```Shift``` + ```Mouse Wheel``` – left / right moving when image zoomed in. <br/>
 ```Ctrl``` + ```Z``` - undo command. <br/>
-```Ctrl``` + ```Shift``` + ```Z``` - redo command.\
-```Ctrl``` + ```S``` - save image in the same file.
+```Ctrl``` + ```Shift``` + ```Z``` – redo command. <br/>
+```Ctrl``` + ```S``` – save image in the same file. <br/>
 
 ## Program Screenshots
 
