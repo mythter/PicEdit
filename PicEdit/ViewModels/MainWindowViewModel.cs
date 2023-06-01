@@ -664,7 +664,7 @@ namespace PicEdit.ViewModels
                 _obStrokeCollection.Clear();
                 _obStrokeCollection.Add(new StrokeCollection());
                 position = -1;
-                strPos = -1;
+                strPos = 0;
 
                 _obCollection.Add(Image);
                 ++position;
