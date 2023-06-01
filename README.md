@@ -1,4 +1,4 @@
-# PicEdit
+# ![logo] PicEdit
 Simple WPF image editor and convertor for a course work project.
 
 ## Installing
@@ -69,3 +69,4 @@ Other images dimensions converting might be fine but not guaranteed. ❗❗❗
 [official website]: https://dotnet.microsoft.com/en-us/download/dotnet
 [latest release]: https://github.com/mythter/PicEdit/releases/latest
 [floppy disk icon]: https://github.com/mythter/PicEdit/assets/60883514/29524a65-eb7c-4273-89c8-cb7555cd47bf
+[logo]: https://github.com/mythter/PicEdit/assets/60883514/01477180-36a1-4c6a-917d-33d8411062b0 "Logo"
