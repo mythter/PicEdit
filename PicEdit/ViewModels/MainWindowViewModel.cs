@@ -2,7 +2,6 @@
 using PicEdit.ViewModels.Base;
 using System;
 using System.Windows;
-using Forms = System.Windows.Forms;
 using EditingMode = System.Windows.Controls.InkCanvasEditingMode;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -643,10 +642,10 @@ namespace PicEdit.ViewModels
 
         private void OnOpenImageCommandExecuted(object p)
         {
-            Forms.OpenFileDialog open = new Forms.OpenFileDialog();
+            var open = new Microsoft.Win32.OpenFileDialog();
             open.Title = "Open an image";
             open.Filter = "Image Files(*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF;*.ICO)|*.BMP;*.JPG;*.JPEG;*.GIF;*.PNG;*.TIFF;*.ICO";
-            if (open.ShowDialog() == Forms.DialogResult.OK)
+            if (open.ShowDialog() == true)
             {
                 _imageStream = new System.IO.MemoryStream(File.ReadAllBytes(open.FileName));
                 string format = open.FileName.Substring(open.FileName.LastIndexOf('.') + 1);
@@ -661,12 +660,19 @@ namespace PicEdit.ViewModels
                 bitmap.Freeze();
                 Image = bitmap;
 
+                _obCollection.Clear();
+                _obStrokeCollection.Clear();
+                _obStrokeCollection.Add(new StrokeCollection());
+                position = -1;
+                strPos = -1;
+
                 _obCollection.Add(Image);
                 ++position;
 
                 OnPropertyChanged(nameof(Image));
-            }
-            ZoomValue = 0.7;
+
+                ZoomValue = 0.7;
+            }           
         }
         #endregion
 
@@ -688,7 +694,7 @@ namespace PicEdit.ViewModels
 
         private void OnConvertImageCommandExecuted(object p)
         {
-            Forms.SaveFileDialog save = new Forms.SaveFileDialog();
+            var save = new Microsoft.Win32.SaveFileDialog();
             save.Title = "Save image as ...";
             save.Filter = "PNG File(*.png)|*.png|" +
                 "JPG File(*.jpg)|*.jpg|" +
@@ -725,7 +731,7 @@ namespace PicEdit.ViewModels
                     break;
             }
 
-            if (save.ShowDialog() == Forms.DialogResult.OK)
+            if (save.ShowDialog() == true)
             {
                 string fileName = save.FileName;
                 string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
@@ -743,7 +749,7 @@ namespace PicEdit.ViewModels
 
         private void OnSaveAsCommandExecuted(object p)
         {
-            Forms.SaveFileDialog save = new Forms.SaveFileDialog();
+            var save = new Microsoft.Win32.SaveFileDialog();
             save.Title = "Save image as ...";
             save.Filter = "PNG File(*.png)|*.png|" +
                 "JPG File(*.jpg)|*.jpg|" +
@@ -754,7 +760,7 @@ namespace PicEdit.ViewModels
             save.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             save.FileName = "Untitled1";
 
-            if (save.ShowDialog() == Forms.DialogResult.OK)
+            if (save.ShowDialog() == true)
             {
                 string fileName = save.FileName;
                 string chosenFormat = fileName.Substring(fileName.LastIndexOf(".") + 1);
