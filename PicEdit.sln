@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicEdit", "PicEdit\PicEdit.csproj", "{9EF6922C-AD79-46C7-BDAC-D6E618D798CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicEdit", "PicEdit\PicEdit.csproj", "{9EF6922C-AD79-46C7-BDAC-D6E618D798CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D96F14F0-4F0B-4C38-9E11-BB23C363AA36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicEditConsole", "Tests\PicEditConsole\PicEditConsole.csproj", "{53B14843-694A-4AE6-8A64-98B24390F46D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicEditConsole", "Tests\PicEditConsole\PicEditConsole.csproj", "{53B14843-694A-4AE6-8A64-98B24390F46D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicEditWPFTest", "Tests\PicEditWPFTest\PicEditWPFTest.csproj", "{22AF85B7-2F9B-4E69-9342-E7ACE72714F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicEditWPFTest", "Tests\PicEditWPFTest\PicEditWPFTest.csproj", "{22AF85B7-2F9B-4E69-9342-E7ACE72714F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
