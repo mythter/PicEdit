@@ -5,6 +5,73 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Fonts\BoldPhosphor.ttf" />
+    <None Remove="Fonts\DuotonePhosphor.ttf" />
+    <None Remove="Fonts\FillPhosphor.ttf" />
+    <None Remove="Fonts\LightPhosphor.ttf" />
+    <None Remove="Fonts\Montserrat-Medium.ttf" />
+    <None Remove="Fonts\Montserrat-Regular.ttf" />
+    <None Remove="Fonts\RegularMaterial.ttf" />
+    <None Remove="Fonts\RegularMaterialIconsRound.otf" />
+    <None Remove="Fonts\RegularMaterialOutlined.otf" />
+    <None Remove="Fonts\RegularMaterialRound.otf" />
+    <None Remove="Fonts\RegularMaterialSharp.otf" />
+    <None Remove="Fonts\RegularMaterialTwoTone.otf" />
+    <None Remove="Fonts\RegularPhosphor.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialOutlined.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialRound.ttf" />
+    <None Remove="Fonts\RegularVariableMaterialSharp.ttf" />
+    <None Remove="Fonts\ThinPhosphor.ttf" />
+    <None Remove="Images\BMP.png" />
+    <None Remove="Images\BMP.svg" />
+    <None Remove="Images\GIF.png" />
+    <None Remove="Images\GIF.svg" />
+    <None Remove="Images\ICON.png" />
+    <None Remove="Images\ICON.svg" />
+    <None Remove="Images\JPG.png" />
+    <None Remove="Images\JPG.svg" />
+    <None Remove="Images\PNG.png" />
+    <None Remove="Images\PNG.svg" />
+    <None Remove="Images\RGB.png" />
+    <None Remove="Images\TIFF.png" />
+    <None Remove="Images\TIFF.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.3.0" />
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Imaging" Version="17.6.36389" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\FillPhosphor.ttf" />
+    <Resource Include="Fonts\Montserrat-Medium.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Montserrat-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\RegularMaterial.ttf" />
+    <Resource Include="Fonts\RegularMaterialIconsRound.otf" />
+    <Resource Include="Fonts\RegularPhosphor.ttf" />
+    <Resource Include="Images\BMP.png" />
+    <Resource Include="Images\GIF.png" />
+    <Resource Include="Images\ICON.png" />
+    <Resource Include="Images\JPG.png" />
+    <Resource Include="Images\PNG.png" />
+    <Resource Include="Images\RGB.png" />
+    <Resource Include="Images\TIFF.png" />
+  </ItemGroup>
 
 </Project>
