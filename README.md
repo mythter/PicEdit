@@ -33,4 +33,4 @@ You can adjust them on the right panel with sliders and other controls.
 
 [official website]: https://dotnet.microsoft.com/en-us/download/dotnet
 [latest release]: https://github.com/mythter/PicEdit/releases/latest
-[floppy disk icon]: 
+[floppy disk icon]: https://github.com/mythter/PicEdit/assets/60883514/29524a65-eb7c-4273-89c8-cb7555cd47bf
