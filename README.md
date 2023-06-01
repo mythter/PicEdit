@@ -26,6 +26,7 @@ There are four main tools:
 2. Rotation
 3. Cropping
 4. Painting
+
 You can adjust them on the right panel with sliders and other controls.
 
 ❗ To apply adjusted tool just select another tool or save the image. ❗
