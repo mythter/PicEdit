@@ -36,12 +36,10 @@ There are six main formats:
 4. BMP
 5. TIFF
 6. ICO
+To convert image select required format and click on ```Save``` button on the bottom panel.
 
-❗❗❗
-Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
-Other images dimensions converting might be fine but not guaranteed.
-
-❗❗❗
+❗❗❗ Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
+Other images dimensions converting might be fine but not guaranteed. ❗❗❗
 ### Keyboard shortcuts
 ```Ctrl``` + ```Mouse Wheel``` - zoom in / zoom out.
 ```Shift``` + ```Mouse Wheel``` - left / right moving when image zoomed in.
@@ -49,6 +47,7 @@ Other images dimensions converting might be fine but not guaranteed.
 ```Ctrl``` + ```Shift``` + ```Z``` - redo command.
 ```Ctrl``` + ```S``` - save image in the same file.
 
+## Program Screenshots
 
 [official website]: https://dotnet.microsoft.com/en-us/download/dotnet
 [latest release]: https://github.com/mythter/PicEdit/releases/latest
