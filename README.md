@@ -38,6 +38,7 @@ There are six main formats:
 4. BMP
 5. TIFF
 6. ICO
+
 To convert image select required format and click on ```Save``` button on the bottom panel.
 
 ❗❗❗ Success when converting to **ICO** format guaranteed only for images 128x128 pixels dimensions or lower. 
