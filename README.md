@@ -14,7 +14,8 @@ A simple WPF image editor and convertor
 To open image go to ```File``` -> ```Open```.
 
 ### Image saving
-To save image in the same file go to ```File``` -> ```Save``` or clicking on floppy disk icon [floppy disk icon] in the top left corner.
+To save image in the same file go to ```File``` -> ```Save``` or clicking on floppy disk icon ![floppy disk icon] in the top left corner.
+
 
 The editor has two tabs:
 1. Editing tab
@@ -33,4 +34,4 @@ You can adjust them on the right panel with sliders and other controls.
 
 [official website]: https://dotnet.microsoft.com/en-us/download/dotnet
 [latest release]: https://github.com/mythter/PicEdit/releases/latest
-[floppy disk icon]: 
+[floppy disk icon]: https://github.com/mythter/PicEdit/assets/60883514/29524a65-eb7c-4273-89c8-cb7555cd47bf
