@@ -1,5 +1,5 @@
 # ![logo] PicEdit
-Simple WPF image editor and convertor for a course work project.
+Simple WPF MVVM image editor and convertor for a course work project.
 
 ## Installing
 1. Download .NET 7 or higher from [official website].
